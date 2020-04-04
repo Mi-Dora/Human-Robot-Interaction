@@ -114,8 +114,8 @@ def write_results(prediction, confidence, num_classes, nms=True, nms_conf=0.4):
     prediction[:, :, :4] = box_a[:, :, :4]
 
     batch_size = prediction.size(0)
-
-    output = prediction.new(1, prediction.size(2) + 1)
+    output = None
+    # output = prediction.new(1, prediction.size(2) + 1)
     write = False
 
     for ind in range(batch_size):

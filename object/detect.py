@@ -55,7 +55,7 @@ def arg_parse():
 
     parser.add_argument("--images", dest='images', help=
     "Image / Directory containing images to perform detection upon",
-                        default="images", type=str)
+                        default="images1", type=str)
     parser.add_argument("--det", dest='det', help=
     "Image / Directory to store detections to",
                         default="det", type=str)

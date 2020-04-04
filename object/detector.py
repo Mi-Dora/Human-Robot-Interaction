@@ -16,7 +16,6 @@ import random
 import pickle as pkl
 
 
-
 class Detector(object):
     def __init__(self, save_path="result", batch_size=1, confidence=0.5, nms_thresh=0.4,
                  cfg_file="cfg/yolov3.cfg", weights_file="weight/yolov3.weights", resolution=416, scales="1,2,3"):
@@ -115,7 +114,9 @@ class Detector(object):
 
         prediction = write_results(prediction, self.confidence,
                                    self.num_classes, nms=True, nms_conf=self.nms_thresh)
-
+        if prediction is None:
+            # print("No detections were made")
+            return -1
         if type(prediction) == int:
             i += 1
             return
@@ -125,12 +126,6 @@ class Detector(object):
 
         if self.CUDA:
             torch.cuda.synchronize()
-
-        try:
-            output
-        except NameError:
-            print("No detections were made")
-            exit()
 
         im_dim = torch.index_select(im_dim, 0, output[:, 0].long())
 
@@ -150,14 +145,18 @@ class Detector(object):
 
         det_names = osp.join(self.det, "10000.jpg")
         cv2.imwrite(det_names, ori_img)
+        return 0
 
 
 if __name__ == '__main__':
 
     detector = Detector()
-    img = cv2.imread('images/0000_color.jpg')
-    detector.detect(img)
+    img = cv2.imread('images/IMG_3129.JPG')
+    ret = detector.detect(img)
+    if ret == -1:
+        print("No detections were made")
     print("Done.")
 
     torch.cuda.empty_cache()
+    exit()
 
