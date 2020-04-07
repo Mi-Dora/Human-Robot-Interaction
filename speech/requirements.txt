@@ -1,0 +1,4 @@
+google-cloud-speech
+google-cloud-language
+six
+SpeechRecognition
