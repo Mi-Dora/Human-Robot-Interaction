@@ -5,4 +5,4 @@ google-cloud-storage==1.27.0
 playsound==1.2.2
 SpeechRecognition==3.8.1
 six==1.14.0
-termcolor==1.11.0
+termcolor==1.1.0
