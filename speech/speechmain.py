@@ -9,16 +9,17 @@ from speech.speech2text import CHUNK_SIZE
 from speech.speech2text import Finalresult
 from speech.speech2text import YELLOW
 import sys
-from playsound import playsound
 import os
+import cv2
 
 os.environ['http_proxy'] = 'http://127.0.0.1:10809'
 os.environ['https_proxy'] = 'http://127.0.0.1:10809'
 
 
-def main():
+def speak():
     """start bidirectional streaming from microphone input to speech API"""
 
+    YES = False
     client = speech_v1p1beta1.SpeechClient()
     enable_speaker_diarization = True
 
@@ -91,34 +92,32 @@ def main():
                 sys.stdout.write('\n')
             stream.new_stream = True
     print(Finalresult)
-    Finalresult.pop()  # pop the final element since it will always be "exit" or "quit"
+    # the Finalresult contains some sentences, we traverse them, such as
+    # str1 = ["I'm David, please offer me a red juice", ' Can you hear me?', ' quit']
+    # pop the final element since it will always be "exit" or "quit"
+    Finalresult.pop()
 
-    # the Finalresult contains some sentences, we traverse them
     for i in range(len(Finalresult)):
         # apply the google-natural-language to attain a emotion analysis
         sample_analyze_sentiment(Finalresult[i])
 
         # in the next step, we will split all words in the previous text list
         words = Finalresult[i].split(" ")
-
+        wordslength = len(words)
         # if those feature words meet some specific requirements, then try to use the text2speech file
-        """
-        if words[k] == A:
-            do 1
-        elif words[k] == B:
-            do 2
-        """
-        # this is the decision of output
-        Robotresponse = "hello shaopu, wait for a moment"
-        # use the method in google-text-to-speech systhesize a .mp3 audio file
-        # then use the python package--Playsound read the content
-        synthesize_text(Robotresponse, i)
+        for word in range(wordslength):
+            # the word selection and phrase can be adjusted, and also we can choose to let "YES=1 / YES=2/ ..."
+            if words[word] == "alan":
+                YES = True
+            if words[word] == "yes":
+                YES = True
+            if words[word] == "banana":
+                YES = True
 
-        # play the audio file
-        playsound("output{}.mp3".format(i))
+    return YES
 
 
 if __name__ == '__main__':
-    main()
+    speak()
 
 # [END speech_transcribe_infinite_streaming]

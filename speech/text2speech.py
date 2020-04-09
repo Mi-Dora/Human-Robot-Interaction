@@ -1,4 +1,5 @@
 from google.cloud import texttospeech
+from playsound import playsound
 import os
 
 os.environ['http_proxy'] = 'http://127.0.0.1:10809'
@@ -26,4 +27,6 @@ def synthesize_text(text, orderofsentence):
     with open('output{}.mp3'.format(orderofsentence), 'wb') as out:
         out.write(response.audio_content)
         print('Audio content written to file "output{}.mp3"'.format(orderofsentence))
+        # play the .mp3 file
+    playsound("output{}.mp3".format(orderofsentence))
 # [END tts_synthesize_text]
