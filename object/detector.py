@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from __future__ import division
 import time
 import torch
@@ -116,10 +117,10 @@ class Detector(object):
                                    self.num_classes, nms=True, nms_conf=self.nms_thresh)
         if prediction is None:
             # print("No detections were made")
-            return -1
+            return 0
         if type(prediction) == int:
             i += 1
-            return
+            return 0
 
         prediction[:, 0] += i * self.batch_size
         output = prediction
@@ -141,11 +142,11 @@ class Detector(object):
             output[i, [2, 4]] = torch.clamp(output[i, [2, 4]], 0.0, im_dim[i, 1])
 
         list(map(lambda x: self.crop(x, ori_img), output))
-        list(map(lambda x: self.write(x, ori_img), output))
+        # list(map(lambda x: self.write(x, ori_img), output))
 
-        det_names = osp.join(self.det, "10000.jpg")
-        cv2.imwrite(det_names, ori_img)
-        return 0
+        # det_names = osp.join(self.det, "10000.jpg")
+        # cv2.imwrite(det_names, ori_img)
+        return 1
 
 
 if __name__ == '__main__':
