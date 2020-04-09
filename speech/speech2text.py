@@ -1,23 +1,19 @@
 # [START speech_transcribe_infinite_streaming]
+import pyaudio
+import time
+import re
+import sys
+from six.moves import queue
 import os
 
 os.environ['http_proxy'] = 'http://127.0.0.1:10809'
 os.environ['https_proxy'] = 'http://127.0.0.1:10809'
-import time
-import re
-import sys
-
-from google.cloud import speech_v1p1beta1
-from natural_language import sample_analyze_sentiment
-import pyaudio
-from six.moves import queue
 
 # Audio recording parameters
 STREAMING_LIMIT = 240000  # 4 minutes
 SAMPLE_RATE = 16000
 CHUNK_SIZE = int(SAMPLE_RATE / 10)  # 100ms
 Finalresult = []
-Wordlibrary = []
 
 RED = '\033[0;31m'
 GREEN = '\033[0;32m'
@@ -139,7 +135,6 @@ class ResumableMicrophoneStream:
 
 
 def listen_print_loop(responses, stream):
-    NumOfsentence = []
     """Iterates through server responses and prints them.
     The responses passed is a generator that will block until a response
     is provided by the server.
@@ -208,82 +203,3 @@ def listen_print_loop(responses, stream):
             sys.stdout.write('\033[K')
             sys.stdout.write(str(corrected_time) + ': ' + transcript + '\r')
             stream.last_transcript_was_final = False
-
-
-def main():
-    """start bidirectional streaming from microphone input to speech API"""
-
-    client = speech_v1p1beta1.SpeechClient()
-    enable_speaker_diarization = True
-    phrases = ['red', 'yellow', 'blue', 'black', 'purple', 'white']
-    boost = 10.0
-    speech_contexts_element = {"phrases": phrases, "boost": boost}
-    speech_contexts = [speech_contexts_element]
-    language_code = "zh"
-    alternative_language_codes_element = "en"
-    alternative_language_codes_element_2 = "es"
-    alternative_language_codes = [
-        alternative_language_codes_element,
-        alternative_language_codes_element_2,
-    ]
-    config = speech_v1p1beta1.types.RecognitionConfig(
-        encoding=speech_v1p1beta1.enums.RecognitionConfig.AudioEncoding.LINEAR16,
-        speech_contexts=speech_contexts,
-        sample_rate_hertz=SAMPLE_RATE,
-        enable_speaker_diarization=enable_speaker_diarization,
-        language_code=language_code,
-        alternative_language_codes=alternative_language_codes,
-        max_alternatives=1)
-    streaming_config = speech_v1p1beta1.types.StreamingRecognitionConfig(
-        config=config,
-        interim_results=True)
-
-    mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
-    print(mic_manager.chunk_size)
-    sys.stdout.write(YELLOW)
-    sys.stdout.write('\nListening, say "Quit" or "Exit" to stop.\n\n')
-    sys.stdout.write('End (ms)       Transcript Results/Status\n')
-    sys.stdout.write('=====================================================\n')
-
-    with mic_manager as stream:
-
-        while not stream.closed:
-            sys.stdout.write(YELLOW)
-            sys.stdout.write('\n' + str(
-                STREAMING_LIMIT * stream.restart_counter) + ': NEW REQUEST\n')
-
-            stream.audio_input = []
-            audio_generator = stream.generator()
-
-            requests = (speech_v1p1beta1.types.StreamingRecognizeRequest(
-                audio_content=content) for content in audio_generator)
-
-            responses = client.streaming_recognize(streaming_config,
-                                                   requests)
-
-            # Now, put the transcription responses to use.
-            listen_print_loop(responses, stream)
-
-            if stream.result_end_time > 0:
-                stream.final_request_end_time = stream.is_final_end_time
-            stream.result_end_time = 0
-            stream.last_audio_input = []
-            stream.last_audio_input = stream.audio_input
-            stream.audio_input = []
-            stream.restart_counter = stream.restart_counter + 1
-
-            if not stream.last_transcript_was_final:
-                sys.stdout.write('\n')
-            stream.new_stream = True
-    print(Finalresult)
-    Finalresult.pop()
-    for i in range(len(Finalresult)):
-        words = Finalresult[i].split(" ")  # do something related to feature words
-
-        sample_analyze_sentiment(Finalresult[i])
-
-
-if __name__ == '__main__':
-    main()
-
-# [END speech_transcribe_infinite_streaming]

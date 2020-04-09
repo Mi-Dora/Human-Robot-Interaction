@@ -1,10 +1,9 @@
+from google.cloud import language_v1
+from google.cloud.language_v1 import enums
 import os
 
 os.environ['http_proxy'] = 'http://127.0.0.1:10809'
 os.environ['https_proxy'] = 'http://127.0.0.1:10809'
-
-from google.cloud import language_v1
-from google.cloud.language_v1 import enums
 
 
 def sample_analyze_sentiment(text_content):
@@ -42,6 +41,7 @@ def sample_analyze_sentiment(text_content):
         )
     )
 
+    # adjust this two thresholds to get a better notice result
     if score < -0.5:
         print("Don't be too negative")
     if magnitude < 0.2:
