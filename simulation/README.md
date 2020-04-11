@@ -1,9 +1,9 @@
 # 仿真部分说明
 
 ## 前言
-### src下的turtlebot包来自于上学期移动机器人实验
-### 编译本部分时把包放在ros工作空间中
-### 各个节点之间数据交流类型都是 UInt16
+src下的turtlebot包来自于上学期移动机器人实验 \n
+编译本部分时把包放在ros工作空间中 \n
+各个节点之间数据交流类型都是 UInt16 \n
 
 ## 编译完成后：
 运行 $ roslaunch robot_sim_demo turtlebot_world.launch 即可打开仿真环境
