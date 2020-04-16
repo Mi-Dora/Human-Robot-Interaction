@@ -6,10 +6,6 @@ import linecache
 import rospy
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
-import base64
-import sys
-# sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import cv2
 import face_recognition
 import requests
@@ -17,10 +13,10 @@ from playsound import playsound
 from human.face_detect import *
 
 
-def callback(data):
-    bridge = CvBridge()
+def Face_mic(data):
     try:
         cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
+        cv_image = cv2.imread()
         cv2.waitKey(3000)
         result = Get_face_result(cv_image)
         cv2.waitKey(3000)
@@ -153,11 +149,5 @@ def callback(data):
         print(e)
 
 
-def listener_py():
-    rospy.init_node('Cimage_listener', anonymous=True)
-    rospy.Subscriber("Camera_image", Image, callback)
-    rospy.spin()
-
-
 if __name__ == '__main__':
-    listener_py()
+    Face_mic()
