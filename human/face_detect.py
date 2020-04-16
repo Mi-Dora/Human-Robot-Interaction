@@ -34,9 +34,11 @@ def Get_face_result(cv2_img):
     header = {'Content-Type': 'application/json'}
     request_url = request_url + "?access_token=" + access_token
     response1 = requests.post(url=request_url, data=params, headers=header)   # <class 'requests.models.Response'>
-    face_result = response1.json()['result']
-    #print(face_result)
-    return face_result
+    if len(response1.json()) == 6:
+        face_result = response1.json()['result']
+        return face_result
+    else:
+        return None
 
 
 def Get_face_locations(face_result):
@@ -80,8 +82,8 @@ def Local_face(cv2_img,selection):
             draw_image = cv2.rectangle(cv2_img, (left, top), (right, bottom), (0, 0, 255), 2)
             if(selection == True):  # Marking Num & gender
                 cv2.putText(draw_image,str(i+1)+' '+gender, (left, bottom), cv2.FONT_HERSHEY_TRIPLEX, 0.6,(0, 255, 0), 1)
-        return draw_image,face_num
-    return False,0
+        return draw_image,face_num,gender_list
+    return False,0,0
 
 
 
