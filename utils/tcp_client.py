@@ -98,7 +98,7 @@ class SocketClient(object):
         print(data)
 
 if __name__ == '__main__':
-    client = SocketClient(ip='127.0.0.1')
+    client = SocketClient(ip='127.0.0.1')  # local host for debugging, using default IP is ok
     client.receiveMessage()
     client.sendFile('../new_test2.jpg')
     client.receiveFile('clientSaved')

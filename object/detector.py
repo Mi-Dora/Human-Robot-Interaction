@@ -23,8 +23,8 @@ class Detector(object):
     def __init__(self, save_path="result", batch_size=1, confidence=0.5, nms_thresh=0.4,
                  cfg_file="cfg/yolov3.cfg", weights_file="weight/yolov3_9100.weights", resolution=416, scales="1,2,3"):
         self.module_path = os.path.dirname(__file__)
-        self.save_path = os.path.join(self.module_path, save_path)
-        self.det = os.path.join(self.module_path, "det")
+        self.save_path = save_path
+        # self.det = os.path.join(self.module_path, "det")
         self.batch_size = batch_size
         self.confidence = confidence
         self.nms_thresh = nms_thresh
@@ -33,8 +33,8 @@ class Detector(object):
         self.reso = resolution
         self.scales = scales
 
-        if not os.path.exists(self.det):
-            os.makedirs(self.det)
+        # if not os.path.exists(self.det):
+        #     os.makedirs(self.det)
 
         self.CUDA = torch.cuda.is_available()
 
