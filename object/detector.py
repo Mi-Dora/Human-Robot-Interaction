@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import division
+import sys
+sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import time
 import torch
 import torch.nn as nn
@@ -19,14 +21,15 @@ import pickle as pkl
 
 class Detector(object):
     def __init__(self, save_path="result", batch_size=1, confidence=0.5, nms_thresh=0.4,
-                 cfg_file="cfg/yolov3.cfg", weights_file="weight/yolov3.weights", resolution=416, scales="1,2,3"):
-        self.save_path = save_path
-        self.det = "det"
+                 cfg_file="cfg/yolov3.cfg", weights_file="weight/yolov3_9100.weights", resolution=416, scales="1,2,3"):
+        self.module_path = os.path.dirname(__file__)
+        self.save_path = os.path.join(self.module_path, save_path)
+        self.det = os.path.join(self.module_path, "det")
         self.batch_size = batch_size
         self.confidence = confidence
         self.nms_thresh = nms_thresh
-        self.cfgfile = cfg_file
-        self.weightsfile = weights_file
+        self.cfgfile = os.path.join(self.module_path, cfg_file)
+        self.weightsfile = os.path.join(self.module_path, weights_file)
         self.reso = resolution
         self.scales = scales
 
@@ -36,12 +39,13 @@ class Detector(object):
         self.CUDA = torch.cuda.is_available()
 
         self.num_classes = 19
-        self.classes = load_classes('data/object.names')
+        self.label_dir = os.path.join(self.module_path, 'data/object.names')
+        self.classes = load_classes(self.label_dir)
 
         # Set up the neural network
         print("Loading network.....")
-        self.model = Darknet(cfg_file)
-        self.model.load_weights(weights_file)
+        self.model = Darknet(self.cfgfile)
+        self.model.load_weights(self.weightsfile)
         print("Network successfully loaded")
 
         self.model.net_info["height"] = self.reso
@@ -57,7 +61,8 @@ class Detector(object):
         self.model.eval()
 
     def write(self, x, img):
-        colors = pkl.load(open("cfg/pallete", "rb"))
+
+        colors = pkl.load(open(os.path.join(self.module_path, "cfg/pallete"), "rb"))
         c1 = tuple(x[1:3].int())
         c2 = tuple(x[3:5].int())
         cls = int(x[-1])
@@ -75,9 +80,10 @@ class Detector(object):
         c2 = tuple(output[3:5].int())
         cls = int(output[-1])
         label = "{0}".format(self.classes[cls])
-        cropped = img[c1[1]:c2[1], c1[0]:c2[0]]
+        cropped = img[c1[1]:c2[1], c1[0]:c2[0]].copy()
         name = osp.join(self.save_path, label+'.jpg')
-        cv2.imwrite(name, cropped)
+        if not os.path.exists(name):
+            cv2.imwrite(name, cropped)
 
     def detect(self, img):
         """
@@ -117,10 +123,10 @@ class Detector(object):
                                    self.num_classes, nms=True, nms_conf=self.nms_thresh)
         if prediction is None:
             # print("No detections were made")
-            return 0
+            return ori_img, 0
         if type(prediction) == int:
             i += 1
-            return 0
+            return ori_img, 0
 
         prediction[:, 0] += i * self.batch_size
         output = prediction
@@ -142,20 +148,36 @@ class Detector(object):
             output[i, [2, 4]] = torch.clamp(output[i, [2, 4]], 0.0, im_dim[i, 1])
 
         list(map(lambda x: self.crop(x, ori_img), output))
-        # list(map(lambda x: self.write(x, ori_img), output))
+        list(map(lambda x: self.write(x, ori_img), output))
 
         # det_names = osp.join(self.det, "10000.jpg")
         # cv2.imwrite(det_names, ori_img)
-        return 1
+        return ori_img, 1
+
+    def detect_cam(self, cam_id, stream=False):
+        cap = cv2.VideoCapture(cam_id)
+        # time.sleep(2)
+        while cap.isOpened():
+            ok, frame = cap.read()
+            if not ok:
+                continue
+            frame, detected = self.detect(frame)
+            if detected and not stream:
+                return frame
+            cv2.imshow('camera', frame)
+            cv2.waitKey(10)
 
 
 if __name__ == '__main__':
-
-    detector = Detector()
-    img = cv2.imread('images/IMG_3129.JPG')
-    ret = detector.detect(img)
-    if ret == -1:
-        print("No detections were made")
+    cam_id = 'http://192.168.3.66:4747/video'
+    detector = Detector(weights_file="weight/yolov3_9100.weights")
+    # img = cv2.imread('images/IMG_3128.JPG')
+    frame = detector.detect_cam(cam_id, stream=True)
+    cv2.imshow('camera', frame)
+    cv2.waitKey(0)
+    # ret = detector.detect(img)
+    # if ret == -1:
+    #     print("No detections were made")
     print("Done.")
 
     torch.cuda.empty_cache()
