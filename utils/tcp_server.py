@@ -43,7 +43,7 @@ class SocketServer(object):
             return False
         if not os.path.exists(savepath):
             os.mkdir(savepath)
-        received, fn = deal_image(self.clientSock, self.cliAddr, savepath)
+        received, fn = deal_image(self.clientSock, savepath)
         if received:
             #     msg = self.ip + ' has got your message'
             #     b_msg = msg.encode(encoding='utf8')
@@ -107,10 +107,10 @@ def sock_receive():
     while True:
         sock, addr = s.accept()  # addr: tuple(ip,port)
         print("Accept connection from {0}".format(addr))  # show (ip:port)
-        deal_image(sock, addr)
+        deal_image(sock)
 
 
-def deal_image(sock, addr, savepath='./'):
+def deal_image(sock, savepath='./'):
     received = False
     fn = None
     try:
