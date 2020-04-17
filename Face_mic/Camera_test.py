@@ -1,9 +1,9 @@
 import cv2
 import os
 
-output_dir = '/home/alan'
+output_dir = '/home/shaopu'
 i = 1
-cap = cv2.VideoCapture('http://192.168.0.3:4747/video')
+cap = cv2.VideoCapture(0)
 
 while 1:
     ret, frame = cap.read()

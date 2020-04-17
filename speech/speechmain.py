@@ -1,3 +1,5 @@
+import linecache
+
 from google.cloud import speech_v1p1beta1
 from speech.emotion_analysis import sample_analyze_sentiment
 from speech.text2speech import synthesize_text
@@ -12,20 +14,24 @@ import sys
 import os
 import cv2
 
-os.environ['http_proxy'] = 'http://127.0.0.1:10809'
-os.environ['https_proxy'] = 'http://127.0.0.1:10809'
-
 
 def speak():
     """start bidirectional streaming from microphone input to speech API"""
 
+    nameflag = 0
+    real_name = 0
+    objectflag = ""
     YES = False
+    list_of_human = ["David", "Jordan", "Lebron"]
     client = speech_v1p1beta1.SpeechClient()
     enable_speaker_diarization = True
 
     # use the method of Voice adaptation in google-cloud speech to improve the accuracy of some
     # specific words, such as labels and names.
-    phrases = ['red', 'yellow', 'blue', 'black', 'purple', 'white']
+    phrases = ['Lebron', 'David', 'Jordan', 'cookies', 'crisps', 'instant_noodles',
+               'mixed_congee', 'gum', 'canned_fruit', 'milk', 'water',
+               'coffee', 'cola', 'herbal_tea', 'iced_tea', 'shampoo', 'soap',
+               'toothpaste', 'napkin', 'slippers', 'floral_water', 'cup']
 
     # you can change the boost value to refactor the Voice adaptation effect
     boost = 10.0
@@ -52,14 +58,17 @@ def speak():
         max_alternatives=1)
     streaming_config = speech_v1p1beta1.types.StreamingRecognitionConfig(
         config=config,
-        interim_results=True)
+        single_utterance=True,
+    )
 
     mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
     print(mic_manager.chunk_size)
     sys.stdout.write(YELLOW)
-    sys.stdout.write('\nListening, say "Quit" or "Exit" to stop.\n\n')
+    # sys.stdout.write('\nListening, say "Quit" or "Exit" to stop.\n\n')
     sys.stdout.write('End (ms)       Transcript Results/Status\n')
     sys.stdout.write('=====================================================\n')
+
+    LABEL_NUM = (len(open("../object/data/object.names", 'rU').readlines()))
 
     with mic_manager as stream:
 
@@ -80,44 +89,30 @@ def speak():
             # Now, put the transcription responses to use.
             listen_print_loop(responses, stream)
 
-            if stream.result_end_time > 0:
-                stream.final_request_end_time = stream.is_final_end_time
-            stream.result_end_time = 0
-            stream.last_audio_input = []
-            stream.last_audio_input = stream.audio_input
-            stream.audio_input = []
-            stream.restart_counter = stream.restart_counter + 1
-
-            if not stream.last_transcript_was_final:
-                sys.stdout.write('\n')
-            stream.new_stream = True
-    print(Finalresult)
-    # the Finalresult contains some sentences, we traverse them, such as
-    # str1 = ["I'm David, please offer me a red juice", ' Can you hear me?', ' quit']
-    # pop the final element since it will always be "exit" or "quit"
     Finalresult.pop()
-
+    print(Finalresult)
+    # Finalresult.pop()
     for i in range(len(Finalresult)):
         # apply the google-natural-language to attain a emotion analysis
         sample_analyze_sentiment(Finalresult[i])
-
-        # in the next step, we will split all words in the previous text list
         words = Finalresult[i].split(" ")
         wordslength = len(words)
-        # if those feature words meet some specific requirements, then try to use the text2speech file
         for word in range(wordslength):
-            # the word selection and phrase can be adjusted, and also we can choose to let "YES=1 / YES=2/ ..."
-            if words[word] == "alan":
-                YES = True
-            if words[word] == "yes":
-                YES = True
-            if words[word] == "banana":
-                YES = True
+            for name in range(3):
+                if words[word] == list_of_human[name]:
+                    nameflag = name + 1
+                    real_name = words[word]
+                    print(real_name)
+                    YES = True
+            for object_label in range(LABEL_NUM):
+                line_content = linecache.getline("../object/data/object.names", object_label + 1)
+                if words[word] == line_content.strip():
+                    objectflag = line_content.strip()
+                    print(objectflag)
+                    YES = True
 
-    return YES
+    return YES, nameflag, objectflag, real_name
 
 
 if __name__ == '__main__':
     speak()
-
-# [END speech_transcribe_infinite_streaming]
