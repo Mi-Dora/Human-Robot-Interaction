@@ -99,34 +99,32 @@ def sock_receive():
 
 def deal_image(sock, addr, savepath='./'):
     received = False
-    while True:
-        try:
-            fileinfo_size = struct.calcsize('128sq')
-            buf = sock.recv(fileinfo_size)
-            if buf:
-                filename, filesize = struct.unpack('128sq', buf)
-                fn = filename.decode().strip('\x00')
-                fn = os.path.basename(fn)
-                new_filename = os.path.join(savepath, fn)
+    try:
+        fileinfo_size = struct.calcsize('128sq')
+        buf = sock.recv(fileinfo_size)
+        if buf:
+            filename, filesize = struct.unpack('128sq', buf)
+            fn = filename.decode().strip('\x00')
+            fn = os.path.basename(fn)
+            new_filename = os.path.join(savepath, fn)
 
-                recvd_size = 0
-                fp = open(new_filename, 'wb')
+            recvd_size = 0
+            fp = open(new_filename, 'wb')
 
-                while not recvd_size == filesize:
-                    if filesize - recvd_size > 1024:
-                        data = sock.recv(1024)
-                        recvd_size += len(data)
-                    else:
-                        data = sock.recv(1024)
-                        recvd_size = filesize
-                    fp.write(data)
-                fp.close()
-                print("\'{0}\' received.".format(fn))
-                received = True
-            sock.close()
-            break
-        except OSError:
-            return False
+            while not recvd_size == filesize:
+                if filesize - recvd_size > 1024:
+                    data = sock.recv(1024)
+                    recvd_size += len(data)
+                else:
+                    data = sock.recv(1024)
+                    recvd_size = filesize
+                fp.write(data)
+            fp.close()
+            print("\'{0}\' received.".format(fn))
+            received = True
+        sock.close()
+    except OSError:
+        return False
     return received
 
 

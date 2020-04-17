@@ -62,6 +62,7 @@ class SocketClient(object):
         received = False
         fileinfo_size = struct.calcsize('128sq')
         try:
+            print('Waiting for receiving')
             buf = self.sock.recv(fileinfo_size)
             if buf:
                 filename, filesize = struct.unpack('128sq', buf)

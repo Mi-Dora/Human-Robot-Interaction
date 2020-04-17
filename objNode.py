@@ -32,9 +32,11 @@ class RosObjDetector(object):
         # rospy.init_node('listener', anonymous=True)
         print("waiting for message")
         rospy.Subscriber("main_pub", String, self.callback)
+        print('After sub')
         rospy.spin()
 
 
 if __name__ == '__main__':
     objDetector = RosObjDetector(save_path='objectFound')
     objDetector.listen()
+    print('After listen')
