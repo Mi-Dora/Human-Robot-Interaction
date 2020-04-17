@@ -62,6 +62,7 @@ class SocketClient(object):
         received = False
         fileinfo_size = struct.calcsize('128sq')
         try:
+            print('Waiting for receiving')
             buf = self.sock.recv(fileinfo_size)
             if buf:
                 filename, filesize = struct.unpack('128sq', buf)
@@ -97,7 +98,7 @@ class SocketClient(object):
         print(data)
 
 if __name__ == '__main__':
-    client = SocketClient(ip='127.0.0.1')
+    client = SocketClient(ip='127.0.0.1')  # local host for debugging, using default IP is ok
     client.receiveMessage()
     client.sendFile('../new_test2.jpg')
     client.receiveFile('clientSaved')

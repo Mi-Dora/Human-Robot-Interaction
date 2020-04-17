@@ -39,24 +39,27 @@ class SocketServer(object):
     def receiveFile(self, savepath='./'):
         if self.clientSock is None:
             print("No connection yet!")
-            return
+            return False
         if not os.path.exists(savepath):
             os.mkdir(savepath)
-        if deal_image(self.clientSock, self.cliAddr, savepath):
+        received, fn = deal_image(self.clientSock, self.cliAddr, savepath)
+        if received:
             msg = self.ip + ' has got your message'
             b_msg = msg.encode(encoding='utf8')
             try:
                 self.clientSock.sendall(b_msg)
             except OSError:
                 print("Connection lost...")
+            return True, fn
+        return False, fn
 
     def sendFile(self, filepath):
         if self.clientSock is None:
             print("No connection yet!")
-            return
+            return False
         if not os.path.isfile(filepath):
             print(filepath + ' does not exists!')
-            return
+            return False
         fhead = struct.pack(b'128sq', bytes(os.path.basename(filepath), encoding='utf-8'),
                             os.stat(filepath).st_size)
         try:
@@ -68,8 +71,10 @@ class SocketServer(object):
                     print('\'{0}\' has been sent to ({1}:{2})'.format(filepath, self.cliAddr[0], self.cliAddr[1]))
                     break
                 self.clientSock.send(data)  # send file data by binary code
+            return True
         except OSError:
             print("Connection lost...")
+        return False
 
     def receiveMessage(self):
         try:
@@ -99,35 +104,34 @@ def sock_receive():
 
 def deal_image(sock, addr, savepath='./'):
     received = False
-    while True:
-        try:
-            fileinfo_size = struct.calcsize('128sq')
-            buf = sock.recv(fileinfo_size)
-            if buf:
-                filename, filesize = struct.unpack('128sq', buf)
-                fn = filename.decode().strip('\x00')
-                fn = os.path.basename(fn)
-                new_filename = os.path.join(savepath, fn)
+    fn = None
+    try:
+        fileinfo_size = struct.calcsize('128sq')
+        buf = sock.recv(fileinfo_size)
+        if buf:
+            filename, filesize = struct.unpack('128sq', buf)
+            fn = filename.decode().strip('\x00')
+            fn = os.path.basename(fn)
+            new_filename = os.path.join(savepath, fn)
 
-                recvd_size = 0
-                fp = open(new_filename, 'wb')
+            recvd_size = 0
+            fp = open(new_filename, 'wb')
 
-                while not recvd_size == filesize:
-                    if filesize - recvd_size > 1024:
-                        data = sock.recv(1024)
-                        recvd_size += len(data)
-                    else:
-                        data = sock.recv(1024)
-                        recvd_size = filesize
-                    fp.write(data)
-                fp.close()
-                print("\'{0}\' received.".format(fn))
-                received = True
-            sock.close()
-            break
-        except OSError:
-            return False
-    return received
+            while not recvd_size == filesize:
+                if filesize - recvd_size > 1024:
+                    data = sock.recv(1024)
+                    recvd_size += len(data)
+                else:
+                    data = sock.recv(1024)
+                    recvd_size = filesize
+                fp.write(data)
+            fp.close()
+            print("\'{0}\' received.".format(fn))
+            received = True
+        sock.close()
+    except OSError:
+        return False, None
+    return received, fn
 
 
 if __name__ == '__main__':
