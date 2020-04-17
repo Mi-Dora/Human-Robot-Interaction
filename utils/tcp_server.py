@@ -2,6 +2,7 @@ import socket
 import os
 import sys
 import struct
+import time
 
 
 class SocketServer(object):
@@ -26,9 +27,9 @@ class SocketServer(object):
         print("Wait for Connection.....................")
         self.clientSock, self.cliAddr = self.serverSock.accept()  # addr: tuple(ip,port)
         print("Accept connection from {0}".format(self.cliAddr))  # show (ip:port)
-        msg = self.ip + ' has accepted your connection request.'
-        b_msg = msg.encode(encoding='utf8')
-        self.clientSock.sendall(b_msg)
+        # msg = self.ip + ' has accepted your connection request.'
+        # b_msg = msg.encode(encoding='utf8')
+        # self.clientSock.sendall(b_msg)
 
     def hasConnection(self):
         if self.clientSock is not None:
@@ -44,12 +45,12 @@ class SocketServer(object):
             os.mkdir(savepath)
         received, fn = deal_image(self.clientSock, self.cliAddr, savepath)
         if received:
-            msg = self.ip + ' has got your message'
-            b_msg = msg.encode(encoding='utf8')
-            try:
-                self.clientSock.sendall(b_msg)
-            except OSError:
-                print("Connection lost...")
+            #     msg = self.ip + ' has got your message'
+            #     b_msg = msg.encode(encoding='utf8')
+            #     try:
+            #         self.clientSock.sendall(b_msg)
+            #     except OSError:
+            #         print("Connection lost...")
             return True, fn
         return False, fn
 
@@ -82,6 +83,13 @@ class SocketServer(object):
             print(data)
         except OSError:
             pass
+
+    def sendMessage(self, msg):
+        b_msg = msg.encode(encoding='utf8')
+        self.clientSock.sendall(b_msg)
+
+    def sendNumber(self, num):
+        self.clientSock.sendall(num)
 
 
 def sock_receive():
@@ -137,8 +145,13 @@ def deal_image(sock, addr, savepath='./'):
 if __name__ == '__main__':
     server = SocketServer()
     server.waitConnection()
-    server.sendFile('../UHD.png')
-    while True:
-        # server.receiveMessage()
-        server.receiveFile('serverSaved')
-
+    # server.sendNumber(2)
+    # server.receiveFile('serverSaved')
+    server.sendFile('2.txt')
+    time.sleep(1)
+    server.sendFile('objectFound/coffee.jpg')
+    time.sleep(1)
+    server.sendFile('objectFound/milk.jpg')
+    # while True:
+    # server.receiveMessage()
+    # server.receiveFile('serverSaved')

@@ -35,6 +35,7 @@ class SocketClient(object):
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.connect((self.ip, self.port))
+            # self.receiveMessage()
         except socket.error as msg:
             print(msg)
             print(sys.exit(1))
@@ -60,9 +61,10 @@ class SocketClient(object):
 
     def receiveFile(self, savepath='./'):
         received = False
-        fileinfo_size = struct.calcsize('128sq')
+        fn = None
         try:
             print('Waiting for receiving')
+            fileinfo_size = struct.calcsize('128sq')
             buf = self.sock.recv(fileinfo_size)
             if buf:
                 filename, filesize = struct.unpack('128sq', buf)
@@ -85,21 +87,23 @@ class SocketClient(object):
                 fp.close()
                 received = True
                 print("\'{0}\' received.".format(fn))
-                if received:
-                    msg = 'Got file: ' + fn
-                    b_msg = msg.encode(encoding='utf8')
-                    self.sock.sendall(b_msg)
+                # if received:
+                #     msg = 'Got file: ' + fn
+                #     b_msg = msg.encode(encoding='utf8')
+                #     self.sock.sendall(b_msg)
         except OSError:
+            received = False
             print("Connection lost ...")
-        return received
+        return received, fn
 
     def receiveMessage(self):
         data = self.sock.recv(1024)
         print(data)
 
+
 if __name__ == '__main__':
     client = SocketClient(ip='127.0.0.1')  # local host for debugging, using default IP is ok
     client.receiveMessage()
-    client.sendFile('../new_test2.jpg')
-    client.receiveFile('clientSaved')
+    # client.sendFile('clientSaved/UHD.png')
+    # client.receiveFile('clientSaved')
 
