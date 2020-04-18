@@ -20,7 +20,6 @@ list_of_human = ["David", "Jordan", "Lebron"]
 
 Compared_name = list()
 
-
 def turtlebot_speak(order_of_human):
     if order_of_human == 0:
         print("Hi, gentleman, what's your name?")
