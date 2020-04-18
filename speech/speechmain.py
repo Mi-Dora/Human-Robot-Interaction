@@ -22,13 +22,13 @@ def speak():
     real_name = 0
     objectflag = ""
     YES = False
-    list_of_human = ["David", "Jordan", "Lebron"]
+    list_of_human = ["John", "Jordan", "Tom"]
     client = speech_v1p1beta1.SpeechClient()
     enable_speaker_diarization = True
 
     # use the method of Voice adaptation in google-cloud speech to improve the accuracy of some
     # specific words, such as labels and names.
-    phrases = ['Lebron', 'David', 'Jordan', 'cookies', 'crisps', 'instant_noodles',
+    phrases = ['John', 'Jordan', 'Tom', 'cookies', 'crisps', 'instant_noodles',
                'mixed_congee', 'gum', 'canned_fruit', 'milk', 'water',
                'coffee', 'cola', 'herbal_tea', 'iced_tea', 'shampoo', 'soap',
                'toothpaste', 'napkin', 'slippers', 'floral_water', 'cup']
@@ -62,11 +62,11 @@ def speak():
     )
 
     mic_manager = ResumableMicrophoneStream(SAMPLE_RATE, CHUNK_SIZE)
-    print(mic_manager.chunk_size)
+    # print(mic_manager.chunk_size)
     sys.stdout.write(YELLOW)
     # sys.stdout.write('\nListening, say "Quit" or "Exit" to stop.\n\n')
-    sys.stdout.write('End (ms)       Transcript Results/Status\n')
-    sys.stdout.write('=====================================================\n')
+    # sys.stdout.write('End (ms)       Transcript Results/Status\n')
+    # sys.stdout.write('=====================================================\n')
 
     LABEL_NUM = (len(open("../object/data/object.names", 'rU').readlines()))
 
@@ -94,7 +94,7 @@ def speak():
     # Finalresult.pop()
     for i in range(len(Finalresult)):
         # apply the google-natural-language to attain a emotion analysis
-        sample_analyze_sentiment(Finalresult[i])
+        # sample_analyze_sentiment(Finalresult[i])
         words = Finalresult[i].split(" ")
         wordslength = len(words)
         for word in range(wordslength):
@@ -102,15 +102,17 @@ def speak():
                 if words[word] == list_of_human[name]:
                     nameflag = name + 1
                     real_name = words[word]
-                    print(real_name)
+                    print("Your name is: {}".format(real_name))
+                    sample_analyze_sentiment(Finalresult[i])
                     YES = True
             for object_label in range(LABEL_NUM):
                 line_content = linecache.getline("../object/data/object.names", object_label + 1)
                 if words[word] == line_content.strip():
                     objectflag = line_content.strip()
-                    print(objectflag)
+                    print("You want {}".format(objectflag))
+                    sample_analyze_sentiment(Finalresult[i])
                     YES = True
-
+    Finalresult.clear()
     return YES, nameflag, objectflag, real_name
 
 

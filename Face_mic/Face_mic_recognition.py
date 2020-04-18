@@ -3,6 +3,8 @@
 from speech.text2speech import synthesize_text
 from speech.speechmain import speak
 import linecache
+from utils.tcp_client import SocketClient
+from utils.multi_receive import multi_receive
 import os
 import cv2
 import face_recognition
@@ -10,16 +12,20 @@ import requests
 from playsound import playsound
 from human.face_detect import *
 
-# os.remove('./images/name.jpg')
-# f = open('./Record.txt', 'r+')
-# f.truncate()
-
-list_of_human = ["David", "Jordan", "Lebron"]
-
-DETECT_TIME = 0
-COMPARE_TIME = 0
+list_of_human = ["John", "Jordan", "Tom"]
 Compared_name = list()
 
+for list_name in range(3):
+    try:
+        os.remove('./images/{}.jpg'.format(list_of_human[list_name]))
+    except IOError:
+        print("FileNotFound Error: cannot find {}.jpg".format(list_of_human[list_name]))
+
+try:
+    f = open('./Record.txt', 'r+')
+    f.truncate()
+except IOError:
+    print("FileNotFound Error: cannot find Record.txt")
 
 def turtlebot_speak(order_of_human):
     if order_of_human == 0:
@@ -35,7 +41,7 @@ def turtlebot_speak(order_of_human):
 
 
 def Human_detect():
-    global DETECT_TIME
+    DETECT_TIME = 0
     cap = cv2.VideoCapture(0)  # open the camera, parameter 0 if using the laptop
     while cap.isOpened():
         OK, frame = cap.read()
@@ -43,12 +49,12 @@ def Human_detect():
             continue
         cv_image = frame
         result = Get_face_result(cv_image)
-        # cv2.waitKey(1000)  # open api qps request limit reached
+        cv2.waitKey(1000)  # open api qps request limit reached
         if result is not None:
             draw_image, FACE_NUM, gender_list = Local_face(cv_image, True)  # Recognize people
             if FACE_NUM == 1:
                 cv2.imshow('test', draw_image)
-                cv2.waitKey(10)
+                cv2.waitKey(100)
 
                 # compare if it is the new people
                 file = open("Record.txt", "r")
@@ -121,32 +127,33 @@ def Human_detect():
                 # write the name and corresponding object to Record.txt with the format of "name\tobject"
 
                 if IS_OLD == 0 or IS_NEW == 1:
-                    # Example:
-                    # cv2.imwrite('./images/name.jpg', cv_image)
                     # gentleman, what's your name?
                     turtlebot_speak(0)
                     YES, nameflag, _, real_name = speak()
                     while not YES:
                         print("Please speak again, I didn't catch your name.")
-                        YES, nameflag, _, real_name = speak()
                         notice_not1 = "Please speak again, I didn't catch your name."
                         synthesize_text(notice_not1, 4)
+                        YES, nameflag, _, real_name = speak()
+
                     cv2.imwrite('./images/{}.jpg'.format(real_name), cv_image)
                     # Hi, XXX, nice to meet you ,what can i do for you?
                     turtlebot_speak(nameflag)
                     print("Listening: Please get me a banana/slipper/...")
-                    YES, nameflag, objectflag, real_name = speak()
+                    YES, _, objectflag, real_name = speak()
                     while not YES:
                         print("Please speak again, I didn't catch what you want.")
-                        YES, nameflag, objectflag, real_name = speak()
                         notice_not2 = "Please speak again, I didn't catch what you want."
                         synthesize_text(notice_not2, 5)
+                        YES, _, objectflag, real_name = speak()
+
                     print("Speaking: I'll get you the {}, wait for a moment".format(objectflag))
                     notice_is_object = "I'll get you the {}, wait for a moment".format(objectflag)
                     synthesize_text(notice_is_object, 6)
-                    f = open("Record.txt", "w")
-                    content = "{}\t{}".format(list_of_human[nameflag - 1], objectflag)
-                    f.writelines(content)
+                    f1 = open("Record.txt", "a")
+                    content = "{}\t{}\n".format(list_of_human[nameflag - 1], objectflag)
+                    f1.writelines(content)
+                    f1.close()
                     DETECT_TIME = DETECT_TIME + 1
                 # show the corresponding object to people
                 if IS_OLD == 1:
@@ -156,10 +163,12 @@ def Human_detect():
 
         if DETECT_TIME == 3:
             break
+    return DETECT_TIME
 
 
 def Human_compare():
     global Compared_name
+    COMPARE_TIME = 0
     cap = cv2.VideoCapture(0)  # open the camera, parameter 0 if using the laptop
     while cap.isOpened():
         OK, frame = cap.read()
@@ -209,53 +218,53 @@ def Human_compare():
                             print('The people has been compared')
                         else:
                             Compared_name.append(name)
-                            Object = line_content.split('\t')[1]
-
-                            #######################################################################################
-                            ####################################### Code here #####################################
-                            ###
-                            ###  Task: Speaking the name and the corresponding object above
-                            ###  etc: print('Speaking: Glad to see you again, alan(name), This is your (object) ')
-                            ###
-                            #######################################################################################
-                            #######################################################################################
-
+                            Object = line_content.split('\t')[1].strip()
+                            print("Speaking: Glad to see you again, {}, here's your {}.".format(name, object))
+                            return_notice = "Speaking: Glad to see you again, {}, here's your {}.".format(name, object)
+                            synthesize_text(return_notice, 15)
                             people_img = cv2.imread('./images/' + name + '.jpg')
-                            Object_img = cv2.imread('./images/' + Object + '.jpg')
                             cv2.imshow(name, people_img)
-                            cv2.imshow(Object, Object_img)
+                            Object_img = cv2.imread('./images/' + Object + '.jpg')
+                            if Object_img is None:
+                                print("Sorry sir, I cannot find what you want.")
+                                ObjectFound = "Sorry sir, I cannot find the {}.".format(Object)
+                                synthesize_text(ObjectFound, 20)
+                            else:
+                                cv2.imshow(Object, Object_img)
                             cv2.waitKey(500)
                             cv2.destroyAllWindows()
                             COMPARE_TIME = COMPARE_TIME + 1  # Record how many people has been Compared.
 
         if COMPARE_TIME == 3:
             break
-
-
-def client():  # Receive the message from TCP Server
-    pass
+    return COMPARE_TIME
 
 
 if __name__ == '__main__':
-
-    # while 1:
-    #     client()                              #Waiting receive the Human_detect message
-    #     if message == "Human_detect":         #once get the message ,break
-    #         break
+    # Human_detect()
+    client = SocketClient(ip='127.0.0.1')
+    face_mic = SocketClient()
+    while 1:
+        _, fn = face_mic.receiveFile()
+        if fn == 'Human_detect.txt':
+            while 1:
+                DETECT_STATISTICS = Human_detect()
+                if DETECT_STATISTICS == 3:
+                    face_mic.sendFile('Record.txt')
+                    break
+            break
+        else:
+            continue
 
     while 1:
-        Human_detect()
-        if DETECT_TIME == 3:
+        received = multi_receive(client, save_path='./images/')
+        if received:
+            while 1:
+                COMPARE_STATISTICS = Human_compare()
+                if COMPARE_STATISTICS == 3:
+                    break
             break
+        else:
+            continue
 
-    # while 1:
-    #     client()                              #Waiting receive the Human_compare message
-    #     if message == "Human_compare":        #once get the message ,break
-    #         break
-
-    while 1:
-        Human_compare()
-        if COMPARE_TIME == 3:
-            break
-
-    print('Game over')
+    print('---------------------------------Game over-------------------------------')

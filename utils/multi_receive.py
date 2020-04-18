@@ -9,6 +9,7 @@ def multi_receive(client, save_path):
             received, fn = client.receiveFile(save_path)
             if not received:
                 print(fn + 'failed to receive.')
+    return received
 
 
 if __name__ == '__main__':

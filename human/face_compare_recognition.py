@@ -3,13 +3,16 @@ import face_recognition
 def face_compare(unknow_person_img):
     known_person_1 = face_recognition.load_image_file("images/obama.jpg")
     known_person_2 = face_recognition.load_image_file("images/biden.jpg")
+    known_person_3 = face_recognition.load_image_file("images/obama2.jpg")
 
     known_person_1_encoding = face_recognition.face_encodings(known_person_1)[0]
     known_person_2_encoding = face_recognition.face_encodings(known_person_2)[0]
+    known_person_3_encoding = face_recognition.face_encodings(known_person_3)[0]
 
     known_encodings = [
         known_person_1_encoding,
-        known_person_2_encoding
+        known_person_2_encoding,
+        known_person_3_encoding
     ]
 
     # when people come in one by one, take a photo and test it
