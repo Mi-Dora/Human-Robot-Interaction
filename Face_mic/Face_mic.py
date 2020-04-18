@@ -3,6 +3,8 @@
 from speech.text2speech import synthesize_text
 from speech.speechmain import speak
 import linecache
+from utils.tcp_client import SocketClient
+from utils.multi_receive import multi_receive
 import os
 import cv2
 import face_recognition
@@ -16,8 +18,6 @@ from human.face_detect import *
 
 list_of_human = ["David", "Jordan", "Lebron"]
 
-DETECT_TIME = 0
-COMPARE_TIME = 0
 Compared_name = list()
 
 
@@ -35,7 +35,7 @@ def turtlebot_speak(order_of_human):
 
 
 def Human_detect():
-    global DETECT_TIME
+    DETECT_TIME = 0
     cap = cv2.VideoCapture(0)  # open the camera, parameter 0 if using the laptop
     while cap.isOpened():
         OK, frame = cap.read()
@@ -156,10 +156,12 @@ def Human_detect():
 
         if DETECT_TIME == 3:
             break
+    return DETECT_TIME
 
 
 def Human_compare():
     global Compared_name
+    COMPARE_TIME = 0
     cap = cv2.VideoCapture(0)  # open the camera, parameter 0 if using the laptop
     while cap.isOpened():
         OK, frame = cap.read()
@@ -209,16 +211,10 @@ def Human_compare():
                             print('The people has been compared')
                         else:
                             Compared_name.append(name)
-                            Object = line_content.split('\t')[1]
-
-                            #######################################################################################
-                            ####################################### Code here #####################################
-                            ###
-                            ###  Task: Speaking the name and the corresponding object above
-                            ###  etc: print('Speaking: Glad to see you again, alan(name), This is your (object) ')
-                            ###
-                            #######################################################################################
-                            #######################################################################################
+                            Object = line_content.split('\t')[1].strip()
+                            print("Speaking: Glad to see you again, {}, here's your {}.".format(name, object))
+                            return_notice = "Speaking: Glad to see you again, {}, here's your {}.".format(name, object)
+                            synthesize_text(return_notice, 15)
 
                             people_img = cv2.imread('./images/' + name + '.jpg')
                             Object_img = cv2.imread('./images/' + Object + '.jpg')
@@ -230,32 +226,34 @@ def Human_compare():
 
         if COMPARE_TIME == 3:
             break
-
-
-def client():  # Receive the message from TCP Server
-    pass
+    return COMPARE_TIME
 
 
 if __name__ == '__main__':
 
-    # while 1:
-    #     client()                              #Waiting receive the Human_detect message
-    #     if message == "Human_detect":         #once get the message ,break
-    #         break
+    client = SocketClient(ip='127.0.0.1')
+    face_mic = SocketClient()
+    while 1:
+        _, fn = face_mic.receiveFile()
+        if fn == 'Human_detect.txt':
+            while 1:
+                DETECT_STATISTICS = Human_detect()
+                if DETECT_STATISTICS == 3:
+                    face_mic.sendFile('Record.txt')
+                    break
+            break
+        else:
+            continue
 
     while 1:
-        Human_detect()
-        if DETECT_TIME == 3:
+        received = multi_receive(client, save_path='../Face_mic/')
+        if received:
+            while 1:
+                COMPARE_STATISTICS = Human_compare()
+                if COMPARE_STATISTICS == 3:
+                    break
             break
+        else:
+            continue
 
-    # while 1:
-    #     client()                              #Waiting receive the Human_compare message
-    #     if message == "Human_compare":        #once get the message ,break
-    #         break
-
-    while 1:
-        Human_compare()
-        if COMPARE_TIME == 3:
-            break
-
-    print('Game over')
+    print('---------------------------------Game over-------------------------------')
