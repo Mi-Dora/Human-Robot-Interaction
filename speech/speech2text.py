@@ -6,8 +6,6 @@ import sys
 from six.moves import queue
 import os
 
-os.environ['http_proxy'] = 'http://127.0.0.1:10809'
-os.environ['https_proxy'] = 'http://127.0.0.1:10809'
 
 # Audio recording parameters
 STREAMING_LIMIT = 240000  # 4 minutes
@@ -189,14 +187,7 @@ def listen_print_loop(responses, stream):
             Finalresult.append(transcript)
             stream.is_final_end_time = stream.result_end_time
             stream.last_transcript_was_final = True
-
-            # Exit recognition if any of the transcribed phrases could be
-            # one of our keywords.
-            if re.search(r'\b(exit|quit)\b', transcript, re.I):
-                sys.stdout.write(YELLOW)
-                sys.stdout.write('Exiting...\n')
-                stream.closed = True
-                break
+            stream.closed = True
 
         else:
             sys.stdout.write(RED)

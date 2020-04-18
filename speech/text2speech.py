@@ -2,8 +2,9 @@ from google.cloud import texttospeech
 from playsound import playsound
 import os
 
-os.environ['http_proxy'] = 'http://127.0.0.1:10809'
-os.environ['https_proxy'] = 'http://127.0.0.1:10809'
+
+# os.environ['http_proxy'] = 'http://127.0.0.1:10809'
+# os.environ['https_proxy'] = 'http://127.0.0.1:10809'
 
 
 def synthesize_text(text, orderofsentence):

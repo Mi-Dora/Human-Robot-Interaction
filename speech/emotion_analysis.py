@@ -1,9 +1,7 @@
 from google.cloud import language_v1
 from google.cloud.language_v1 import enums
+from speech.text2speech import synthesize_text
 import os
-
-os.environ['http_proxy'] = 'http://127.0.0.1:10809'
-os.environ['https_proxy'] = 'http://127.0.0.1:10809'
 
 
 def sample_analyze_sentiment(text_content):
@@ -44,15 +42,15 @@ def sample_analyze_sentiment(text_content):
     # adjust this two thresholds to get a better notice result
     if score < -0.5:
         print("Don't be too negative")
-    if magnitude < 0.2:
+        negative_notice = "Don't be too negative"
+        synthesize_text(negative_notice, 10)
+    if magnitude < 0.05:
         print("lift up your spirit! ")
+        liftup_notice = "Hey, man, what's up? Lift up your spirit! "
+        synthesize_text(liftup_notice, 11)
     # [END language_python_migration_sentiment_text]
 
     # Get sentiment for all sentences in the document
-    # for sentence in response.sentences:
-    #     print(u"Sentence text: {}".format(sentence.text.content))
-    #     print(u"Sentence sentiment score: {}".format(sentence.sentiment.score))
-    #     print(u"Sentence sentiment magnitude: {}".format(sentence.sentiment.magnitude))
 
     # Get the language of the text, which will be the same as
     # the language specified in the request or, if not specified,
