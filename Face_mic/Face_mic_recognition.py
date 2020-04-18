@@ -27,7 +27,6 @@ try:
 except IOError:
     print("FileNotFound Error: cannot find Record.txt")
 
-
 def turtlebot_speak(order_of_human):
     if order_of_human == 0:
         print("Hi, gentleman, what's your name?")
