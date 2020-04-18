@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from speech.text2speech import synthesize_text
+from speech.emotion_analysis import requirements_meet
 from speech.speechmain import speak
 import linecache
 from utils.tcp_client import SocketClient
@@ -17,9 +18,22 @@ from human.face_compare_baidu import *
 # f = open('./Record.txt', 'r+')
 # f.truncate()
 
-list_of_human = ["David", "Jordan", "Lebron"]
+list_of_human = ["John", "Jordan", "Tom"]
 
 Compared_name = list()
+
+for list_name in range(3):
+    try:
+        os.remove('./images/{}.jpg'.format(list_of_human[list_name]))
+    except IOError:
+        print("FileNotFound Error: cannot find {}.jpg".format(list_of_human[list_name]))
+
+try:
+    f = open('./Record.txt', 'r+')
+    f.truncate()
+except IOError:
+    print("FileNotFound Error: cannot find Record.txt")
+
 
 def turtlebot_speak(order_of_human):
     if order_of_human == 0:
@@ -33,6 +47,7 @@ def turtlebot_speak(order_of_human):
                           "what can I do for you?".format(list_of_human[order_of_human - 1])
         synthesize_text(notice_is_human, order_of_human)
 
+
 def Human_detect():
     DETECT_TIME = 0
     cap = cv2.VideoCapture(0)  # open the camera, parameter 0 if using the laptop
@@ -42,7 +57,7 @@ def Human_detect():
             continue
         cv_image = frame
         result = Get_face_result(cv_image)
-        # cv2.waitKey(1000)  # open api qps request limit reached
+        cv2.waitKey(1000)  # open api qps request limit reached
         if result is not None:
             draw_image, FACE_NUM, gender_list = Local_face(cv_image, True)  # Recognize people
             if FACE_NUM == 1:
@@ -103,32 +118,37 @@ def Human_detect():
                 # write the name and corresponding object to Record.txt with the format of "name\tobject"
 
                 if IS_OLD == 0 or IS_NEW == 1:
-                    # Example:
-                    # cv2.imwrite('./images/name.jpg', cv_image)
                     # gentleman, what's your name?
                     turtlebot_speak(0)
                     YES, nameflag, _, real_name = speak()
                     while not YES:
                         print("Please speak again, I didn't catch your name.")
-                        YES, nameflag, _, real_name = speak()
                         notice_not1 = "Please speak again, I didn't catch your name."
                         synthesize_text(notice_not1, 4)
+                        YES, nameflag, _, real_name = speak()
+
                     cv2.imwrite('./images/{}.jpg'.format(real_name), cv_image)
                     # Hi, XXX, nice to meet you ,what can i do for you?
                     turtlebot_speak(nameflag)
-                    print("Listening: Please get me a banana/slipper/...")
-                    YES, nameflag, objectflag, real_name = speak()
+                    print("Listening: Please get me a coffee/water/cookie...")
+                    YES, _, objectflag, real_name = speak()
                     while not YES:
                         print("Please speak again, I didn't catch what you want.")
-                        YES, nameflag, objectflag, real_name = speak()
                         notice_not2 = "Please speak again, I didn't catch what you want."
                         synthesize_text(notice_not2, 5)
+                        YES, _, objectflag, real_name = speak()
+                    requirements_meet(objectflag)
                     print("Speaking: I'll get you the {}, wait for a moment".format(objectflag))
-                    notice_is_object = "I'll get you the {}, wait for a moment".format(objectflag)
+                    notice_is_object = ""
+                    if objectflag == "iced_tea":
+                        notice_is_object = "I'll get you the iced tea, wait for a moment"
+                    else:
+                        notice_is_object = "I'll get you the {}, wait for a moment".format(objectflag)
                     synthesize_text(notice_is_object, 6)
-                    f = open("Record.txt", "w")
-                    content = "{}\t{}".format(list_of_human[nameflag - 1], objectflag)
-                    f.writelines(content)
+                    f1 = open("Record.txt", "a")
+                    content = "{}\t{}\n".format(list_of_human[nameflag - 1], objectflag)
+                    f1.writelines(content)
+                    f1.close()
                     DETECT_TIME = DETECT_TIME + 1
                 # show the corresponding object to people
                 if IS_OLD == 1:
@@ -142,7 +162,7 @@ def Human_detect():
 
 
 def Human_compare():
-    global Compared_name
+    global Compared_name, IS_compared
     COMPARE_TIME = 0
     cap = cv2.VideoCapture(0)  # open the camera, parameter 0 if using the laptop
     while cap.isOpened():

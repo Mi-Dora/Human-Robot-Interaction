@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from speech.text2speech import synthesize_text
+from speech.emotion_analysis import requirements_meet
 from speech.speechmain import speak
 import linecache
 from utils.tcp_client import SocketClient
@@ -26,6 +27,7 @@ try:
     f.truncate()
 except IOError:
     print("FileNotFound Error: cannot find Record.txt")
+
 
 def turtlebot_speak(order_of_human):
     if order_of_human == 0:
@@ -54,7 +56,7 @@ def Human_detect():
             draw_image, FACE_NUM, gender_list = Local_face(cv_image, True)  # Recognize people
             if FACE_NUM == 1:
                 cv2.imshow('test', draw_image)
-                cv2.waitKey(100)
+                cv2.waitKey(10)
 
                 # compare if it is the new people
                 file = open("Record.txt", "r")
@@ -139,16 +141,20 @@ def Human_detect():
                     cv2.imwrite('./images/{}.jpg'.format(real_name), cv_image)
                     # Hi, XXX, nice to meet you ,what can i do for you?
                     turtlebot_speak(nameflag)
-                    print("Listening: Please get me a banana/slipper/...")
+                    print("Listening: Please get me a coffee/water/cookie...")
                     YES, _, objectflag, real_name = speak()
                     while not YES:
                         print("Please speak again, I didn't catch what you want.")
                         notice_not2 = "Please speak again, I didn't catch what you want."
                         synthesize_text(notice_not2, 5)
                         YES, _, objectflag, real_name = speak()
-
+                    requirements_meet(objectflag)
                     print("Speaking: I'll get you the {}, wait for a moment".format(objectflag))
-                    notice_is_object = "I'll get you the {}, wait for a moment".format(objectflag)
+                    notice_is_object = ""
+                    if objectflag == "iced_tea":
+                        notice_is_object = "I'll get you the iced tea, wait for a moment"
+                    else:
+                        notice_is_object = "I'll get you the {}, wait for a moment".format(objectflag)
                     synthesize_text(notice_is_object, 6)
                     f1 = open("Record.txt", "a")
                     content = "{}\t{}\n".format(list_of_human[nameflag - 1], objectflag)

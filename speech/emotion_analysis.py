@@ -4,6 +4,26 @@ from speech.text2speech import synthesize_text
 import os
 
 
+def requirements_meet(object_name):
+    if object_name == "coffee":
+        print("Don't drink too much, you will suffer from insomnia tonight!")
+        notice_insomnia = "Don't drink too much, you will suffer from insomnia tonight!"
+        synthesize_text(notice_insomnia, "_coffee")
+    if object_name == "water" or object_name == "cola" or \
+            object_name == "iced_tea" or object_name == "milk":
+        print("You must be thirsty! Hold on for a second!")
+        notice_insomnia = "You must be thirsty! Hold on for a second!"
+        synthesize_text(notice_insomnia, "_water")
+    if object_name == "cookies":
+        print("You must be hungry! Hold on for a second! ")
+        notice_insomnia = "You must be hungry! Hold on for a second! "
+        synthesize_text(notice_insomnia, "_cookie")
+    if object_name == "shampoo":
+        print("Are you tired? Take a hot bath and relax yourself! ")
+        notice_insomnia = "Are you tired? Take a hot bath and relax yourself! "
+        synthesize_text(notice_insomnia, "_shampoo")
+
+
 def sample_analyze_sentiment(text_content):
     """
     Analyzing Sentiment in a String
@@ -32,7 +52,7 @@ def sample_analyze_sentiment(text_content):
     magnitude = response.document_sentiment.magnitude
     score = response.document_sentiment.score
     # Get overall sentiment of the input document
-    # print(u"Document sentiment score: {}".format(response.document_sentiment.score))
+    print(u"Document sentiment score: {}".format(response.document_sentiment.score))
     # print(
     #     u"Document sentiment magnitude: {}".format(
     #         response.document_sentiment.magnitude
@@ -40,9 +60,13 @@ def sample_analyze_sentiment(text_content):
     # )
 
     # adjust this two thresholds to get a better notice result
-    if score < 0.4:
+    if score < -0.2:
         print("Hey, man, what's up? Lift up your spirit! ")
         negative_notice = "Hey, man, what's up? Lift up your spirit! "
+        synthesize_text(negative_notice, 7)
+    if score > 0.1:
+        print("You look great today！")
+        negative_notice = "You look great today！"
         synthesize_text(negative_notice, 7)
     # if magnitude < 0.000001:
     #     print("lift up your spirit! ")
