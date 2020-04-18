@@ -17,7 +17,13 @@ module_path = os.path.dirname(__file__)
 receive_path = 'requestGot'
 
 def callback(data):
-    if data.data == 'send_object':
+    if data.data == 'Human_detect':
+        message = 'Human_detect.txt'
+        with open(message, 'w') as wf:
+            wf.write(message.split('.')[0])
+        sent = server.sendFile(message)
+        time.sleep(1)
+    elif data.data == 'Send_Object':
         to_send_files = []
         found_path = 'objectFound'
         for root, _, files in os.walk(receive_path):
@@ -46,12 +52,12 @@ def callback(data):
 
 
 server = SocketServer()
-pub = rospy.Publisher('tcp_pub', String, queue_size=10)
-rospy.init_node('tcp_pub', anonymous=False)
-rospy.Subscriber("main_pub", String, callback)
+pub = rospy.Publisher('Main_Sub', String, queue_size=10)
+rospy.init_node('Tcp_py', anonymous=False)
+rospy.Subscriber("Main_Pub", String, callback)
 server.waitConnection()
 
-
+human_num = 0
 while True:
     received, fn = server.receiveFile(receive_path)
     if received:
@@ -59,9 +65,11 @@ while True:
             requests.append(fn)
         elif fn.split('.')[-1] == 'jpg' or fn.split('.')[-1] == 'png':
             faces.append(fn)
+            human_num += 1
             name = fn.split('.')[0]
-            rospy.loginfo(name)
-            pub.publish(name)
+            msg = 'Human' + str(human_num)
+            rospy.loginfo(name + ' found')
+            pub.publish(msg)
 
 
 

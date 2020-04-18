@@ -14,24 +14,24 @@ import cv2
 class RosObjDetector(object):
     def __init__(self, save_path):
         self.detector = Detector(save_path=save_path)
-        self.pub = rospy.Publisher('obj_pub', String, queue_size=10)
-        rospy.init_node('obj_pub', anonymous=False)
+        self.pub = rospy.Publisher('Main_Sub', String, queue_size=10)
+        rospy.init_node('Obj_py', anonymous=False)
 
     def callback(self, data):
         print("Here is callback")
-        if data.data == "object_reached":
+        if data.data == "Object_detect":
             cam_id = 'http://192.168.3.66:4747/video'
             detected_frame = self.detector.detect_cam(cam_id)
             cv2.imwrite("ObjScene.jpg", detected_frame)
             if not rospy.is_shutdown():
-                done_msg = "object_detected"
+                done_msg = "Object_detected"
                 rospy.loginfo(done_msg)
                 self.pub.publish(done_msg)
 
     def listen(self):
         # rospy.init_node('listener', anonymous=True)
         print("waiting for message")
-        rospy.Subscriber("main_pub", String, self.callback)
+        rospy.Subscriber("Main_Pub", String, self.callback)
         print('After sub')
         rospy.spin()
 
