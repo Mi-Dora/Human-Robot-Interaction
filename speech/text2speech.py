@@ -3,10 +3,6 @@ from playsound import playsound
 import os
 
 
-# os.environ['http_proxy'] = 'http://127.0.0.1:10809'
-# os.environ['https_proxy'] = 'http://127.0.0.1:10809'
-
-
 def synthesize_text(text, orderofsentence):
     client = texttospeech.TextToSpeechClient()
 
@@ -25,9 +21,9 @@ def synthesize_text(text, orderofsentence):
     response = client.synthesize_speech(input_text, voice, audio_config)
 
     # The response's audio_content is binary.
-    with open('output{}.mp3'.format(orderofsentence), 'wb') as out:
+    with open("../Face_mic/output_audio/output{}.mp3".format(orderofsentence), 'wb') as out:
         out.write(response.audio_content)
-        print('Audio content written to file "output{}.mp3"'.format(orderofsentence))
+        # print('Audio content written to file "output{}.mp3"'.format(orderofsentence))
         # play the .mp3 file
-    playsound("output{}.mp3".format(orderofsentence))
+    playsound("../Face_mic/output_audio/output{}.mp3".format(orderofsentence))
 # [END tts_synthesize_text]

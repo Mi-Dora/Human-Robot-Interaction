@@ -32,22 +32,22 @@ def sample_analyze_sentiment(text_content):
     magnitude = response.document_sentiment.magnitude
     score = response.document_sentiment.score
     # Get overall sentiment of the input document
-    print(u"Document sentiment score: {}".format(response.document_sentiment.score))
-    print(
-        u"Document sentiment magnitude: {}".format(
-            response.document_sentiment.magnitude
-        )
-    )
+    # print(u"Document sentiment score: {}".format(response.document_sentiment.score))
+    # print(
+    #     u"Document sentiment magnitude: {}".format(
+    #         response.document_sentiment.magnitude
+    #     )
+    # )
 
     # adjust this two thresholds to get a better notice result
-    if score < -0.5:
-        print("Don't be too negative")
-        negative_notice = "Don't be too negative"
-        synthesize_text(negative_notice, 10)
-    if magnitude < 0.05:
-        print("lift up your spirit! ")
-        liftup_notice = "Hey, man, what's up? Lift up your spirit! "
-        synthesize_text(liftup_notice, 11)
+    if score < 0.4:
+        print("Hey, man, what's up? Lift up your spirit! ")
+        negative_notice = "Hey, man, what's up? Lift up your spirit! "
+        synthesize_text(negative_notice, 7)
+    # if magnitude < 0.000001:
+    #     print("lift up your spirit! ")
+    #     liftup_notice = "Hey, man, what's up? Lift up your spirit! "
+    #     synthesize_text(liftup_notice, 8)
     # [END language_python_migration_sentiment_text]
 
     # Get sentiment for all sentences in the document

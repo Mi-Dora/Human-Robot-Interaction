@@ -146,7 +146,6 @@ def listen_print_loop(responses, stream):
     """
 
     for response in responses:
-
         if get_current_time() - stream.start_time > STREAMING_LIMIT:
             stream.start_time = get_current_time()
             break
@@ -181,16 +180,16 @@ def listen_print_loop(responses, stream):
         # line, so subsequent lines will overwrite them.
 
         if result.is_final:
-            sys.stdout.write(GREEN)
-            sys.stdout.write('\033[K')
-            sys.stdout.write(str(corrected_time) + ': ' + transcript + '\n')
+            # sys.stdout.write(GREEN)
+            # sys.stdout.write('\033[K')
+            # sys.stdout.write(str(corrected_time) + ': ' + transcript + '\n')
             Finalresult.append(transcript)
             stream.is_final_end_time = stream.result_end_time
             stream.last_transcript_was_final = True
             stream.closed = True
 
         else:
-            sys.stdout.write(RED)
-            sys.stdout.write('\033[K')
-            sys.stdout.write(str(corrected_time) + ': ' + transcript + '\r')
+            # sys.stdout.write(RED)
+            # sys.stdout.write('\033[K')
+            # sys.stdout.write(str(corrected_time) + ': ' + transcript + '\r')
             stream.last_transcript_was_final = False
