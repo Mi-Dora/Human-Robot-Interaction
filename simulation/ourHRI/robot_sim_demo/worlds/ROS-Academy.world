@@ -1,0 +1,54 @@
+<?xml version="1.0" ?>
+<sdf version="1.4">
+  <world name="default">
+  <scene>
+    <ambient>0.68 0.68 0.68 1.0</ambient>
+    <sky>
+      <sunrise/>
+      <clouds>
+        <speed>12</speed>
+    </clouds>
+    </sky>
+  </scene>
+    <physics type='ode'>
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+      <gravity>0 0 -9.8</gravity>
+    </physics>
+
+    <include>
+      <uri>model://ISCAS_groundplane</uri>
+    </include>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <include>
+      <uri>model://our_house</uri>
+      <pose>0 -1.0 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://cabinet</uri>
+      <pose>-2.32 -2.965 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://bookshelf</uri>
+      <pose>3.3496 -4.399 0 0 0 0</pose>
+    </include>
+    <include>
+      <uri>model://person_standing</uri>
+      <name>person_standing</name>
+      <pose>2.238798 -3.10881 0 0 0 -2.355</pose>
+    </include>
+    <include>
+      <uri>model://person_standing</uri>
+      <name>person_standing_0</name>
+      <pose>0.671 -3.492 0 0 0 3.14</pose>
+    </include>
+    <include>
+      <uri>model://person_standing</uri>
+      <name>person_standing_1</name>
+      <pose>2.746 -1.822 0 0 0 -1.57</pose>
+    </include>
+  </world>
+</sdf>
