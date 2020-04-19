@@ -67,6 +67,7 @@ def Human_detect():
                 # compare if it is the new people
                 file = open("Record.txt", "r")
                 content = file.readlines()
+                file.close()
                 IS_NEW = 0
                 IS_OLD = 0
                 if len(content) == 0:  # If the Record.txt is blank, the guy must be new.
@@ -168,12 +169,12 @@ def Human_compare():
         if result is not None:
             draw_image, FACE_NUM, gender_list = Local_face(cv_image, True)  # Recognize people
             if FACE_NUM == 1:
-                line_content = linecache.getline("Record.txt", 1)
-                name1 = line_content.split('\t')[0]
-                line_content = linecache.getline("Record.txt", 2)
-                name2 = line_content.split('\t')[0]
-                line_content = linecache.getline("Record.txt", 3)
-                name3 = line_content.split('\t')[0]
+                file = open("Record.txt", "r")
+                content = file.readlines()
+                file.close()
+                name1 = content[0].split('\t')[0]
+                name2 = content[1].split('\t')[0]
+                name3 = content[2].split('\t')[0]
                 exist_img1 = cv2.imread('./images/' + name1 + '.jpg')
                 exist_img2 = cv2.imread('./images/' + name2 + '.jpg')
                 exist_img3 = cv2.imread('./images/' + name3 + '.jpg')
@@ -187,10 +188,13 @@ def Human_compare():
                 if IS_OLD_1 == 1 or IS_OLD_2 == 1 or IS_OLD_3 == 1:
                     if IS_OLD_1 == 1:
                         name = name1
+                        Object_line = 0
                     elif IS_OLD_2 == 1:
                         name = name2
+                        Object_line = 1
                     else:
                         name = name3
+                        Object_line = 2
 
                     for j in Compared_name:
                         if j == name:
@@ -200,7 +204,7 @@ def Human_compare():
                         print('The people has been compared')
                     else:
                         Compared_name.append(name)
-                        Object = line_content.split('\t')[1].strip()
+                        Object = content[Object_line].split('\t')[1].strip()
                         print("Speaking: Glad to see you again, {}, here's your {}.".format(name, object))
                         return_notice = "Speaking: Glad to see you again, {}, here's your {}.".format(name, object)
                         synthesize_text(return_notice, 15)
