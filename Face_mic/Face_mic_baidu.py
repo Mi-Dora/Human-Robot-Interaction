@@ -66,38 +66,32 @@ def Human_detect():
 
                 # compare if it is the new people
                 file = open("Record.txt", "r")
-                content = file.read()
+                content = file.readlines()
                 IS_NEW = 0
                 IS_OLD = 0
                 if len(content) == 0:  # If the Record.txt is blank, the guy must be new.
                     IS_NEW = 1
                     print("IS_NEW = 1")
                 else:  # If the Record.txt is not blank, compare with other guy in Record.txt.
-                    NAME_NUM = (len(open("Record.txt", 'rU').readlines()))
+                    NAME_NUM = len(content)
                     IS_OLD_1 = 0
                     IS_OLD_2 = 0
                     IS_OLD_3 = 0
                     if NAME_NUM == 1:
-                        line_content = linecache.getline("Record.txt", 1)
-                        name1 = line_content.split('\t')[0]
+                        name1 = content[0].split('\t')[0]
                         exist_img1 = cv2.imread('./images/' + name1 + '.jpg')
                         IS_OLD_1 = Get_face_compare_result(exist_img1, cv_image)
                     if NAME_NUM == 2:
-                        line_content = linecache.getline("Record.txt", 1)
-                        name1 = line_content.split('\t')[0]
-                        line_content = linecache.getline("Record.txt", 2)
-                        name2 = line_content.split('\t')[0]
+                        name1 = content[0].split('\t')[0]
+                        name2 = content[1].split('\t')[0]
                         exist_img1 = cv2.imread('./images/' + name1 + '.jpg')
                         exist_img2 = cv2.imread('./images/' + name2 + '.jpg')
                         IS_OLD_1 = Get_face_compare_result(exist_img1, cv_image)
                         IS_OLD_2 = Get_face_compare_result(exist_img2, cv_image)
                     if NAME_NUM == 3:
-                        line_content = linecache.getline("Record.txt", 1)
-                        name1 = line_content.split('\t')[0]
-                        line_content = linecache.getline("Record.txt", 2)
-                        name2 = line_content.split('\t')[0]
-                        line_content = linecache.getline("Record.txt", 3)
-                        name3 = line_content.split('\t')[0]
+                        name1 = content[0].split('\t')[0]
+                        name2 = content[1].split('\t')[0]
+                        name3 = content[2].split('\t')[0]
                         exist_img1 = cv2.imread('./images/' + name1 + '.jpg')
                         exist_img2 = cv2.imread('./images/' + name2 + '.jpg')
                         exist_img3 = cv2.imread('./images/' + name3 + '.jpg')
