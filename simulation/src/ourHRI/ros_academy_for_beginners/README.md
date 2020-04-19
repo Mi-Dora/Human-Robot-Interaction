@@ -1,3 +1,0 @@
-# ros_academy_for_beginners
-
-我是一个Metapacakge，我的身体很空，没有代码没有示例，但我依赖了教学包里所有其他的软件包。所以我是老大，哈哈哈……

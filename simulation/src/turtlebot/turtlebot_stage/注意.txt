@@ -1,5 +1,0 @@
-export TURTLEBOT_3D_SENSOR=kinect
-export TURTLEBOT_STAGE_MAP_FILE=/home/lc/catkin_ws/src/turtlebot_stage/maps/4042.yaml
-export TURTLEBOT_STAGE_WORLD_FILE=/home/lc/catkin_ws/src/turtlebot_stage/maps/stage/office.world
-
-将三句话放入.bashrc,记得修改路径

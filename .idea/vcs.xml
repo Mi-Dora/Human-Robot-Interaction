@@ -7,5 +7,10 @@
     <mapping directory="$PROJECT_DIR$/simulation/src/turtlebot/turtlebot" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/simulation/src/turtlebot/turtlebot_apps" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/simulation/src/turtlebot/turtlebot_interactions" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/simulation/turtlebot/depthimage_to_laserscan" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/simulation/turtlebot/navigation" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/simulation/turtlebot/turtlebot" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/simulation/turtlebot/turtlebot_apps" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/simulation/turtlebot/turtlebot_interactions" vcs="Git" />
   </component>
 </project>
