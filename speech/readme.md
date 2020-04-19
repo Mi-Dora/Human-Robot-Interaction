@@ -49,8 +49,6 @@ conda install nwani::portaudio nwani::pyaudio
 
 It is based on this Reference:<https://github.com/ContinuumIO/anaconda-issues/issues/4139#issuecomment-433710003>
 
-**Besides, make sure it is possible for you to use Google.**
-
 ##### Playsound
 To guarantee the program can get correct output speech voice based on the given
 text(by the text-to-speech module), you need to install this package to play the 
@@ -61,11 +59,34 @@ If you run this installation process in the conda environment just like me, then
 
 Reference: <https://askubuntu.com/questions/1057832/how-to-install-gi-for-anaconda-python3-6?newreg=3a43e4aa13ff4b1f938afeac20da1fd9>
 
+#### Features
+
+- Transcribe audio from streaming input
+
+    *single_utterance* is activated to enable the API to end the transcription request 
+    immediately when it detects the end of speech. 
+- Voice adaption
+
+    use words listed in the *object.names* to improve the chance of being recognized by 
+    the Speech-to-Text API. You can change the these feature phrases and the value of boost
+    to attain a more acceptable result of your own program. 
+- Multilingual recognition
+
+    In this module, you can speak either Chinese or English to get the recognized result. While 
+    the Chinese language cannot be dealt with in the following combination process. 
+- Interaction of emotion
+
+    1. To endow the robot with more practical interaction features, the Natural-Language API is enabled. 
+    Then a threshold of **score** was carefully chosen to evaluate the mood of the current speaker.
+    2. Some specific matches were established to pursue a more Intelligent interactive scene - with different object 
+    labels, we can obtain different voice prompts.
+
 #### Troubleshooting
 Remember to adjust the input volume of the microphone to a normal level in case too much 
 noise will lead to bad recognition results. You can use **test.py** to test whether your microphone 
 is correctly working.
 
+**Besides, make sure it is possible for you to use Google.**
 
 
 

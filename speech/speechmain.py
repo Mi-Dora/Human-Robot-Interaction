@@ -28,10 +28,8 @@ def speak():
 
     # use the method of Voice adaptation in google-cloud speech to improve the accuracy of some
     # specific words, such as labels and names.
-    phrases = ['John', 'Jordan', 'Tom', 'cookies', 'crisps', 'instant_noodles',
-               'mixed_congee', 'gum', 'canned_fruit', 'milk', 'water',
-               'coffee', 'cola', 'herbal_tea', 'iced_tea', 'shampoo', 'soap',
-               'toothpaste', 'napkin', 'slippers', 'floral_water', 'cup']
+    phrases = ['John', 'Jordan', 'Tom', 'cookies', 'milk', 'water',
+               'coffee', 'cola', 'iced tea']
 
     # you can change the boost value to refactor the Voice adaptation effect
     boost = 10.0
@@ -91,10 +89,8 @@ def speak():
 
     Finalresult.pop()
     print(Finalresult)
-    # Finalresult.pop()
     for i in range(len(Finalresult)):
         # apply the google-natural-language to attain a emotion analysis
-        # sample_analyze_sentiment(Finalresult[i])
         words = Finalresult[i].split(" ")
         wordslength = len(words)
         for word in range(wordslength):
@@ -107,6 +103,12 @@ def speak():
                     YES = True
             for object_label in range(LABEL_NUM):
                 line_content = linecache.getline("../object/data/object.names", object_label + 1)
+                if line_content.strip() == "iced_tea":
+                    if words[word] == "tea":
+                        print("You want iced_tea")
+                        objectflag = "iced_tea"
+                        sample_analyze_sentiment(Finalresult[i])
+                        YES = True
                 if words[word] == line_content.strip():
                     objectflag = line_content.strip()
                     print("You want {}".format(objectflag))
