@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 from __future__ import division
 import sys
-sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+try:
+    sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
+except ValueError:
+    pass
 import time
 import torch
 import torch.nn as nn

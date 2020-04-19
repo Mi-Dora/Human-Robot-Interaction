@@ -29,7 +29,8 @@ def multi_send(receive_path, found_path):
                 for line in lines:
                     request = line.strip().split(' ')[-1]
                     obj_filename = request + '.jpg'
-                    to_send_files.append(os.path.join(found_path, obj_filename))
+                    if os.path.exists(os.path.join(found_path, obj_filename)):
+                        to_send_files.append(os.path.join(found_path, obj_filename))
     num_to_sent = len(to_send_files)
     num_name = str(num_to_sent) + '.txt'
     with open(num_name, 'w') as wf:

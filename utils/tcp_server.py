@@ -15,7 +15,7 @@ class SocketServer(object):
             self.serverSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.serverSock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             self.serverSock.bind((self.ip, self.port))
-            self.serverSock.listen(1)  # this server class only support one connection
+            self.serverSock.listen(10)  # this server class only support one connection
         except socket.error as msg:
             print(msg)
             sys.exit(1)
