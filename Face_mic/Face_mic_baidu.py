@@ -145,6 +145,7 @@ def Human_detect():
                     f1.writelines(content)
                     f1.close()
                     DETECT_TIME = DETECT_TIME + 1
+
                 # show the corresponding object to people
                 if IS_OLD == 1:
                     pass
@@ -230,11 +231,15 @@ if __name__ == '__main__':
 
     # client = SocketClient(ip='127.0.0.1')
     face_mic = SocketClient()
+    # _, fn = face_mic.receiveFile()
+    # if fn == 'Human_detect.txt':
+    #     face_mic.sendFile('Record.txt')
     while 1:
         _, fn = face_mic.receiveFile()
         if fn == 'Human_detect.txt':
             while 1:
                 DETECT_STATISTICS = Human_detect()
+                face_mic.sendFile('./images/{}.jpg'.format(list_of_human[DETECT_STATISTICS - 1]))
                 if DETECT_STATISTICS == 3:
                     face_mic.sendFile('Record.txt')
                     break
