@@ -22,7 +22,8 @@ class RosObjDetector(object):
         if data.data == "Object_detect":
             cam_id = 'http://192.168.3.66:4747/video'
             detected_frame = self.detector.detect_cam(cam_id)
-            cv2.imwrite("ObjScene.jpg", detected_frame)
+            cv2.imshow("ObjScene", detected_frame)
+            cv2.waitKey(3000)
             if not rospy.is_shutdown():
                 done_msg = "Object_detected"
                 rospy.loginfo(done_msg)
