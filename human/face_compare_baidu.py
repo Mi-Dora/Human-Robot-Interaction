@@ -11,16 +11,18 @@ def Cv2_base64(image):
     base64_str = base64.b64encode(base64_str)
     return base64_str
 
+
 def read_img(img1, img2):
     with open(img1, 'rb') as f:
-        pic1=base64.b64encode(f.read())
+        pic1 = base64.b64encode(f.read())
     with open(img2, 'rb') as f:
-        pic2=base64.b64encode(f.read())
-    params=json.dumps([
-        {"image": str(pic1,"utf-8"), "image_type": 'BASE64', "face_type": "LIVE"},
-        {"image": str(pic2,"utf-8"), "image_type": 'BASE64', "face_type": "LIVE"}
+        pic2 = base64.b64encode(f.read())
+    params = json.dumps([
+        {"image": str(pic1, "utf-8"), "image_type": 'BASE64', "face_type": "LIVE"},
+        {"image": str(pic2, "utf-8"), "image_type": 'BASE64', "face_type": "LIVE"}
     ])
     return params
+
 
 def Get_face_compare_result(Aim_img, New_img):
     # Get access_token
@@ -36,8 +38,8 @@ def Get_face_compare_result(Aim_img, New_img):
     img1 = Cv2_base64(Aim_img)
     img2 = Cv2_base64(New_img)
     params = json.dumps([
-        {"image": str(img1,"utf-8"), "image_type": 'BASE64', "face_type": "LIVE"},
-        {"image": str(img2,"utf-8"), "image_type": 'BASE64', "face_type": "LIVE"}
+        {"image": str(img1, "utf-8"), "image_type": 'BASE64', "face_type": "LIVE"},
+        {"image": str(img2, "utf-8"), "image_type": 'BASE64', "face_type": "LIVE"}
     ])
     # params = read_img(Aim_img, New_img)
     request_url = "https://aip.baidubce.com/rest/2.0/face/v3/match"
@@ -54,7 +56,3 @@ def Get_face_compare_result(Aim_img, New_img):
     else:
         print('Get result fail!')
         return -1
-
-
-
-

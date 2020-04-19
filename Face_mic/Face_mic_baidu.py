@@ -57,12 +57,12 @@ def Human_detect():
             continue
         cv_image = frame
         result = Get_face_result(cv_image)
-        cv2.waitKey(1000)  # open api qps request limit reached
+        # cv2.waitKey(1000)  # open api qps request limit reached
         if result is not None:
             draw_image, FACE_NUM, gender_list = Local_face(cv_image, True)  # Recognize people
             if FACE_NUM == 1:
                 cv2.imshow('test', draw_image)
-                cv2.waitKey(10)
+                # cv2.waitKey(10)
 
                 # compare if it is the new people
                 file = open("Record.txt", "r")
@@ -80,13 +80,16 @@ def Human_detect():
                     if NAME_NUM == 1:
                         line_content = linecache.getline("Record.txt", 1)
                         name1 = line_content.split('\t')[0]
+                        print(name1)
                         exist_img1 = cv2.imread('./images/' + name1 + '.jpg')
                         IS_OLD_1 = Get_face_compare_result(exist_img1, cv_image)
                     if NAME_NUM == 2:
                         line_content = linecache.getline("Record.txt", 1)
                         name1 = line_content.split('\t')[0]
+                        print(name1)
                         line_content = linecache.getline("Record.txt", 2)
                         name2 = line_content.split('\t')[0]
+                        print(name2)
                         exist_img1 = cv2.imread('./images/' + name1 + '.jpg')
                         exist_img2 = cv2.imread('./images/' + name2 + '.jpg')
                         IS_OLD_1 = Get_face_compare_result(exist_img1, cv_image)
@@ -94,10 +97,13 @@ def Human_detect():
                     if NAME_NUM == 3:
                         line_content = linecache.getline("Record.txt", 1)
                         name1 = line_content.split('\t')[0]
+                        print(name1)
                         line_content = linecache.getline("Record.txt", 2)
                         name2 = line_content.split('\t')[0]
+                        print(name2)
                         line_content = linecache.getline("Record.txt", 3)
                         name3 = line_content.split('\t')[0]
+                        print(name3)
                         exist_img1 = cv2.imread('./images/' + name1 + '.jpg')
                         exist_img2 = cv2.imread('./images/' + name2 + '.jpg')
                         exist_img3 = cv2.imread('./images/' + name3 + '.jpg')
@@ -146,6 +152,8 @@ def Human_detect():
                         notice_is_object = "I'll get you the {}, wait for a moment".format(objectflag)
                     synthesize_text(notice_is_object, 6)
                     f1 = open("Record.txt", "a")
+                    # if DETECT_TIME != 0:
+                    #     f1.writelines("\n")
                     content = "{}\t{}\n".format(list_of_human[nameflag - 1], objectflag)
                     f1.writelines(content)
                     f1.close()
@@ -210,11 +218,15 @@ def Human_compare():
                         print("Speaking: Glad to see you again, {}, here's your {}.".format(name, object))
                         return_notice = "Speaking: Glad to see you again, {}, here's your {}.".format(name, object)
                         synthesize_text(return_notice, 15)
-
                         people_img = cv2.imread('./images/' + name + '.jpg')
-                        Object_img = cv2.imread('./images/' + Object + '.jpg')
                         cv2.imshow(name, people_img)
-                        cv2.imshow(Object, Object_img)
+                        Object_img = cv2.imread('./images/' + Object + '.jpg')
+                        if Object_img is None:
+                            print("Sorry sir, I cannot find what you want.")
+                            ObjectFound = "Sorry sir, I cannot find the {}.".format(Object)
+                            synthesize_text(ObjectFound, 20)
+                        else:
+                            cv2.imshow(Object, Object_img)
                         cv2.waitKey(500)
                         cv2.destroyAllWindows()
                         COMPARE_TIME = COMPARE_TIME + 1  # Record how many people has been Compared.
@@ -225,30 +237,31 @@ def Human_compare():
 
 
 if __name__ == '__main__':
-
-    client = SocketClient(ip='127.0.0.1')
-    face_mic = SocketClient()
+    # Human_detect()
+    # client = SocketClient()
+    # face_mic = SocketClient()
+    # while 1:
+    #     _, fn = face_mic.receiveFile()
+    #     if fn == 'Human_detect.txt':
     while 1:
-        _, fn = face_mic.receiveFile()
-        if fn == 'Human_detect.txt':
-            while 1:
-                DETECT_STATISTICS = Human_detect()
-                if DETECT_STATISTICS == 3:
-                    face_mic.sendFile('Record.txt')
-                    break
+        DETECT_STATISTICS = Human_detect()
+        if DETECT_STATISTICS == 3:
+            print("All have been recorded!\n")
+            # face_mic.sendFile('Record.txt')
             break
-        else:
-            continue
+        #     break
+        # else:
+        #     continue
 
-    while 1:
-        received = multi_receive(client, save_path='../Face_mic/')
-        if received:
-            while 1:
-                COMPARE_STATISTICS = Human_compare()
-                if COMPARE_STATISTICS == 3:
-                    break
-            break
-        else:
-            continue
+    # while 1:
+    #     received = multi_receive(face_mic, save_path='./images/')
+    #     if received:
+    #         while 1:
+    #             COMPARE_STATISTICS = Human_compare()
+    #             if COMPARE_STATISTICS == 3:
+    #                 break
+    #         break
+    #     else:
+    #         continue
 
     print('---------------------------------Game over-------------------------------')
