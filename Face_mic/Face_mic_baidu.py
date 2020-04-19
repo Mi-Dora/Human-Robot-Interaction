@@ -21,6 +21,7 @@ list_of_human = ["David", "Jordan", "Lebron"]
 
 Compared_name = list()
 
+
 def turtlebot_speak(order_of_human):
     if order_of_human == 0:
         print("Hi, gentleman, what's your name?")
@@ -32,6 +33,7 @@ def turtlebot_speak(order_of_human):
         notice_is_human = "Nice to meet you {}, " \
                           "what can I do for you?".format(list_of_human[order_of_human - 1])
         synthesize_text(notice_is_human, order_of_human)
+
 
 def Human_detect():
     DETECT_TIME = 0
