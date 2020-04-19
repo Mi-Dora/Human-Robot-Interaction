@@ -1,6 +1,5 @@
 # -*- coding: UTF-8 -*-
 from aip import AipSpeech
-# from playsound import playsound
 from pygame import mixer
 import time
 import random
@@ -13,7 +12,7 @@ def broadcast(text):
     SECRET_KEY = 'DXGksTQTSzHrgu8g9LkM3FqPptRALjbv'
     client = AipSpeech(APP_ID, API_KEY, SECRET_KEY)
 
-    result = client.synthesis(text, 'zh', 1, {'vol': 5, 'spd': 3, 'pit': 5, 'per': 0})
+    result = client.synthesis(text, 'zh', 1, {'vol': 5, 'spd': 4, 'pit': 3, 'per': 0})
     file_name = str(int(time.time())) + ".mp3"
     if not isinstance(result, dict):
         with open(file_name, 'wb') as f:
@@ -27,4 +26,5 @@ def broadcast(text):
     os.remove(file_name)
 
 if __name__ == '__main__':
-    broadcast("龟龟正在前往寻找物品")
+    # broadcast("龟龟正在前往寻找物品")
+    broadcast("龟龟已到达房间，开始寻找客人。")
