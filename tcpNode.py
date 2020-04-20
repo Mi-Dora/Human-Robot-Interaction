@@ -63,7 +63,7 @@ def callback(data):
         # if sent:
         #     facemic_start = True
         time.sleep(1)
-    elif data.data == 'Send_Object':
+    elif data.data == 'Send_object':
         multi_send(receive_path, found_path)
 
 

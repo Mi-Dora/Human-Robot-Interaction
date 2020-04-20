@@ -9,7 +9,7 @@ src下的turtlebot包来自于上学期移动机器人实验；
 运行 $ roslaunch robot_sim_demo turtlebot_world.launch 即可打开仿真环境，
 其中robot_sim_demo在/src/ourHRI下；
 之后打开新的终端运行 $ roslaunch turtlebot_rviz_launchers view_navigation.launch 即可打开rviz；
-再打开一个新的终端运行 $ roslaunch turtlebot_gazebo amcl_demo.launch map_file:=/filepath/mymap.yaml，
+再打开一个新的终端运行 $ roslaunch turtlebot_gazebo amcl_demo.launch map_file:=/home/midora/tutorial_ws/src/mymap/mymap.yaml，
 其中mymap.yaml在/src/mymap下；
 这时候就可以看到在rviz中的地图了
 
