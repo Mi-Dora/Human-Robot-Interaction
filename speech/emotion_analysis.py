@@ -64,7 +64,7 @@ def sample_analyze_sentiment(text_content):
         print("Hey, man, what's up? Lift up your spirit! ")
         negative_notice = "Hey, man, what's up? Lift up your spirit! "
         synthesize_text(negative_notice, 7)
-    if score > 0.05:
+    if score > 0.02:
         print("You look great today！")
         negative_notice = "You look great today！"
         synthesize_text(negative_notice, 7)

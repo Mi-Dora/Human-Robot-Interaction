@@ -7,12 +7,12 @@ import linecache
 from utils.tcp_client import SocketClient
 from utils.multi_receive import multi_receive
 import os
-import cv2
 import face_recognition
 import requests
 from playsound import playsound
 from human.face_detect import *
 from human.face_compare_baidu import *
+import cv2
 
 # os.remove('./images/name.jpg')
 # f = open('./Record.txt', 'r+')
@@ -125,6 +125,9 @@ def Human_detect(face_mic):
                             notice_not1 = "Please speak again, I didn't catch your name."
                             synthesize_text(notice_not1, 4)
                             YES, nameflag, _, real_name = speak()
+                        print("Are you {}".format(real_name))
+                        notice_conf_name = "Are you {}".format(real_name)
+                        synthesize_text(notice_conf_name, 30)
 
                         cv2.imwrite('./images/{}.jpg'.format(real_name), cv_image)
                         # Hi, XXX, nice to meet you ,what can i do for you?
@@ -150,7 +153,7 @@ def Human_detect(face_mic):
                         f1.close()
                         face_mic.sendFile('./images/{}.jpg'.format(list_of_human[DETECT_TIME]))
                         DETECT_TIME = DETECT_TIME + 1
-
+                        # cap.release()
                     # show the corresponding object to people
                     if IS_OLD == 1:
                         pass
@@ -231,13 +234,14 @@ def Human_compare():
                                     return_notice = "Glad to see you again, {}, here's your {}.".format(name, Object)
                                 synthesize_text(return_notice, 15)
                                 cv2.imshow(name, people_img)
+                                cv2.imshow(Object, Object_img)
                             else:
-                                print("Sorry sir, I cannot find what you want.")
-                                ObjectFound = "Sorry sir, I cannot find the {}.".format(Object)
+                                print("Sorry {}, I cannot find what you want.".format(name))
+                                ObjectFound = "Sorry {}, I cannot find the {}.".format(name, Object)
                                 synthesize_text(ObjectFound, 20)
                                 cv2.imshow(name, people_img)
-                                cv2.imshow(Object, Object_img)
-                            cv2.waitKey(1000)
+                                # cv2.imshow(Object, Object_img)
+                            cv2.waitKey(2000)
                             cv2.destroyAllWindows()
                             COMPARE_TIME = COMPARE_TIME + 1  # Record how many people has been Compared.
 
@@ -247,29 +251,23 @@ def Human_compare():
 
 
 if __name__ == '__main__':
-    # client = SocketClient(ip='127.0.0.1')
-    # face_mic = SocketClient()
-    # _, fn = face_mic.receiveFile()
-    # if fn == 'Human_detect.txt':
-    #     face_mic.sendFile('Record.txt')
-    # while 1:
-    #     _, fn = face_mic.receiveFile()
-    #     if fn == 'Human_detect.txt':
-    #         # Human_detect(face_mic)
-    #         face_mic.sendFile('./images/John.jpg')
-    #         face_mic.sendFile('./images/Jordan.jpg')
-    #         face_mic.sendFile('./images/Tom.jpg')
-    #         face_mic.sendFile('Record.txt')
-    #         break
-    #     else:
-    #         continue
-    #
-    # while 1:
-    #     received = multi_receive(face_mic, save_path='./images/')
-    #     if received:
-    Human_compare()
-    #     break
-    # else:
-    #     continue
+    face_mic = SocketClient()
+
+    while 1:
+        _, fn = face_mic.receiveFile()
+        if fn == 'Human_detect.txt':
+            Human_detect(face_mic)
+            face_mic.sendFile("Record.txt")
+            break
+        else:
+            continue
+
+    while 1:
+        received = multi_receive(face_mic, save_path='./images/')
+        if received:
+            Human_compare()
+            break
+        else:
+            continue
 
     print('---------------------------------Game over-------------------------------')

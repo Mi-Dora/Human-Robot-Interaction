@@ -33,6 +33,21 @@ class SocketClient(object):
     def __init__(self, ip='116.235.60.223', port=33333):
         self.ip = ip
         self.port = port
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # try:
+        #     self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #     self.sock.connect((self.ip, self.port))
+        #     # self.receiveMessage()
+        # except socket.error as msg:
+        #     print(msg)
+        #     print(sys.exit(1))
+
+    def __del__(self):
+        self.sock.close()
+
+    def connect(self):
+        self.sock.close()
+        self.sock = None
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.connect((self.ip, self.port))
@@ -40,13 +55,6 @@ class SocketClient(object):
         except socket.error as msg:
             print(msg)
             print(sys.exit(1))
-
-    def __del__(self):
-        self.sock.close()
-
-    def connect(self):
-        self.sock.close()
-        self.sock.connect((self.ip, self.port))
 
     def sendFile(self, filepath):
         if not os.path.isfile(filepath):
@@ -110,7 +118,15 @@ class SocketClient(object):
 
 
 if __name__ == '__main__':
-    client = SocketClient(ip='127.0.0.1')  # local host for debugging, using default IP is ok
+    client = SocketClient()  # local host for debugging, using default IP is ok
     # client.receiveMessage()
     # client.sendFile('clientSaved/UHD.png')
     client.receiveFile('clientSaved')
+    client.receiveFile('clientSaved')
+    client.receiveFile('clientSaved')
+    # client.sendFile('biden.jpg')
+    # # time.sleep(1.0)
+    # client.sendFile('Jordan.jpg')
+    # # time.sleep(1.0)
+    # client.sendFile('obama.jpg')
+    # # time.sleep(1.0)
