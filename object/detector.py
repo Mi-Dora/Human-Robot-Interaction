@@ -165,6 +165,8 @@ class Detector(object):
             if not ok:
                 continue
             frame, detected = self.detect(frame)
+            if not os.path.exists('ObjScene.jpg'):
+                cv2.imwrite('ObjScene.jpg', frame)
             if detected and not stream:
                 return frame
             cv2.imshow('camera', frame)
@@ -176,6 +178,7 @@ if __name__ == '__main__':
     detector = Detector(weights_file="weight/yolov3_9100.weights")
     # img = cv2.imread('images/IMG_3128.JPG')
     frame = detector.detect_cam(cam_id, stream=True)
+
     cv2.imshow('camera', frame)
     cv2.waitKey(0)
     # ret = detector.detect(img)

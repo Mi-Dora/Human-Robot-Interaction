@@ -18,12 +18,13 @@ class RosObjDetector(object):
         rospy.init_node('Obj_py', anonymous=False)
 
     def callback(self, data):
-        print("Here is callback")
+        # print("Here is callback")
         if data.data == "Object_detect":
             cam_id = 'http://192.168.3.66:4747/video'
             detected_frame = self.detector.detect_cam(cam_id)
-            cv2.imshow("ObjScene", detected_frame)
+            cv2.imshow("Camera", detected_frame)
             cv2.waitKey(3000)
+            cv2.destroyWindow('Camera')
             if not rospy.is_shutdown():
                 done_msg = "Object_detected"
                 rospy.loginfo(done_msg)
@@ -31,13 +32,13 @@ class RosObjDetector(object):
 
     def listen(self):
         # rospy.init_node('listener', anonymous=True)
-        print("waiting for message")
+        print("waiting for object detect message")
         rospy.Subscriber("Main_Pub", String, self.callback)
-        print('After sub')
+        # print('After sub')
         rospy.spin()
 
 
 if __name__ == '__main__':
     objDetector = RosObjDetector(save_path='objectFound')
     objDetector.listen()
-    print('After listen')
+    # print('After listen')

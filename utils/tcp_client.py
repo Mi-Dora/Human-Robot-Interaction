@@ -51,7 +51,6 @@ class SocketClient(object):
         try:
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.sock.connect((self.ip, self.port))
-            # self.receiveMessage()
         except socket.error as msg:
             print(msg)
             print(sys.exit(1))
@@ -118,15 +117,7 @@ class SocketClient(object):
 
 
 if __name__ == '__main__':
-    client = SocketClient()  # local host for debugging, using default IP is ok
+    client = SocketClient(ip='127.0.0.1')  # local host for debugging, using default IP is ok
     # client.receiveMessage()
     # client.sendFile('clientSaved/UHD.png')
     client.receiveFile('clientSaved')
-    client.receiveFile('clientSaved')
-    client.receiveFile('clientSaved')
-    # client.sendFile('biden.jpg')
-    # # time.sleep(1.0)
-    # client.sendFile('Jordan.jpg')
-    # # time.sleep(1.0)
-    # client.sendFile('obama.jpg')
-    # # time.sleep(1.0)
