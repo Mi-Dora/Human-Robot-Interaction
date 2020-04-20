@@ -24,6 +24,8 @@ class SocketServer(object):
         self.serverSock.close()
 
     def waitConnection(self):
+        if self.clientSock is not None:
+            self.clientSock.close()
         print("Wait for Connection.....................")
         self.clientSock, self.cliAddr = self.serverSock.accept()  # addr: tuple(ip,port)
         print("Accept connection from {0}".format(self.cliAddr))  # show (ip:port)
@@ -41,10 +43,10 @@ class SocketServer(object):
         # if self.clientSock is None:
         #     print("No connection yet!")
         #     return False
-        if self.clientSock is not None:
-            self.clientSock.close()
-            # self.clientSock = None
-        self.waitConnection()
+        # if self.clientSock is not None:
+        #     self.clientSock.close()
+        #     # self.clientSock = None
+        # self.waitConnection()
         # time.sleep(2)
         if not os.path.exists(savepath):
             os.mkdir(savepath)
@@ -57,18 +59,18 @@ class SocketServer(object):
             #     except OSError:
             #         print("Connection lost...")
             return True, fn
-        print('No receive')
+        # print('No receive')
         return False, fn
 
     def sendFile(self, filepath):
         # if self.clientSock is None:
         #     print("No connection yet!")
         #     return False
-        if self.clientSock is not None:
-            self.clientSock.close()
-            # self.clientSock = None
-        self.waitConnection()
-        time.sleep(1)
+        # if self.clientSock is not None:
+        #     self.clientSock.close()
+        #     # self.clientSock = None
+        # self.waitConnection()
+        # time.sleep(1)
         if not os.path.isfile(filepath):
             print(filepath + ' does not exists!')
             return False
