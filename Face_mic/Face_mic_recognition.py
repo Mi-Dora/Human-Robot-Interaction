@@ -83,6 +83,7 @@ def Human_detect():
                         known_person_1 = face_recognition.load_image_file('./images/' + name1 + '.jpg')
                         line_content = linecache.getline("Record.txt", 2)
                         name2 = line_content.split('\t')[0]
+                        print(name2)
                         known_person_2 = face_recognition.load_image_file('./images/' + name2 + '.jpg')
                         known_person_1_encoding = face_recognition.face_encodings(known_person_1)[0]
                         known_person_2_encoding = face_recognition.face_encodings(known_person_2)[0]
@@ -194,12 +195,15 @@ def Human_compare():
                     continue
                 line_content = linecache.getline("Record.txt", 1)
                 name1 = line_content.split('\t')[0]
+                print(name1)
                 known_person_1 = face_recognition.load_image_file('./images/' + name1 + '.jpg')
                 line_content = linecache.getline("Record.txt", 2)
                 name2 = line_content.split('\t')[0]
+                print(name2)
                 known_person_2 = face_recognition.load_image_file('./images/' + name2 + '.jpg')
                 line_content = linecache.getline("Record.txt", 3)
                 name3 = line_content.split('\t')[0]
+                print(name3)
                 known_person_3 = face_recognition.load_image_file('./images/' + name3 + '.jpg')
                 known_person_1_encoding = face_recognition.face_encodings(known_person_1)[0]
                 known_person_2_encoding = face_recognition.face_encodings(known_person_2)[0]
@@ -248,29 +252,30 @@ def Human_compare():
 
 if __name__ == '__main__':
     # Human_detect()
-    client = SocketClient(ip='127.0.0.1')
-    face_mic = SocketClient()
+    # client = SocketClient(ip='127.0.0.1')
+    # face_mic = SocketClient()
+    # while 1:
+    #     _, fn = face_mic.receiveFile()
+    #     if fn == 'Human_detect.txt':
     while 1:
-        _, fn = face_mic.receiveFile()
-        if fn == 'Human_detect.txt':
-            while 1:
-                DETECT_STATISTICS = Human_detect()
-                if DETECT_STATISTICS == 3:
-                    face_mic.sendFile('Record.txt')
-                    break
+        DETECT_STATISTICS = Human_detect()
+        if DETECT_STATISTICS == 3:
+            print("All have been recorded!\n")
+            # face_mic.sendFile('Record.txt')
             break
-        else:
-            continue
+    #         break
+    #     else:
+    #         continue
+    #
+    # while 1:
+    #     received = multi_receive(client, save_path='./images/')
+    #     if received:
+    #         while 1:
+    #             COMPARE_STATISTICS = Human_compare()
+    #             if COMPARE_STATISTICS == 3:
+    #                 break
+    #         break
+    #     else:
+    #         continue
 
-    while 1:
-        received = multi_receive(client, save_path='./images/')
-        if received:
-            while 1:
-                COMPARE_STATISTICS = Human_compare()
-                if COMPARE_STATISTICS == 3:
-                    break
-            break
-        else:
-            continue
-
-    print('---------------------------------Game over-------------------------------')
+print('---------------------------------Game over-------------------------------')
