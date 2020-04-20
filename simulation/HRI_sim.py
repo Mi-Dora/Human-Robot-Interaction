@@ -1,4 +1,5 @@
 import rospy
+import time
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 import actionlib
 from actionlib_msgs.msg import *
@@ -98,7 +99,7 @@ def callback(data):
         navigator = GoToPose()
 
         # Customize the following values so they are appropriate for your location
-        position = {'x': 1.00, 'y' : -2.37}
+        position = {'x': 0.97, 'y' : -2.05}
         quaternion = {'r1' : 0.000, 'r2' : 0.000, 'r3' : 0.000, 'r4' : 1.000}
 
         rospy.loginfo("Go to (%s, %s) pose", position['x'], position['y'])
@@ -107,7 +108,7 @@ def callback(data):
         if success:
             rospy.loginfo("Reached the guest room")
             rospy.loginfo("Searching!")
-            adjust(20)
+            adjust(19)
             talker(4)
         else:
             rospy.loginfo("The base failed to reach!")
@@ -118,7 +119,7 @@ def callback(data):
         navigator = GoToPose()
 
         # Customize the following values so they are appropriate for your location
-        position = {'x': -0.45, 'y' : -2.39}
+        position = {'x': -0.95, 'y' : -2.05}
         quaternion = {'r1' : 0.000, 'r2' : 0.000, 'r3' : 0.000, 'r4' : 1.000}
 
         rospy.loginfo("Go to (%s, %s) pose", position['x'], position['y'])
@@ -127,7 +128,7 @@ def callback(data):
         if success:
             rospy.loginfo("Reached the thing room")
             rospy.loginfo("Searching!")
-            adjust(20)
+            adjust(15)
             talker(5)
         else:
             rospy.loginfo("The base failed to reach!")
@@ -147,40 +148,51 @@ def callback(data):
         if success:
             rospy.loginfo("Reached the guest room")
             rospy.loginfo("Searching!")
-            adjust(20)
+            adjust(19)
             talker(6)
+            time.sleep(10)
+            adjust(2)
+            time.sleep(10)
+            adjust(10)
         else:
             rospy.loginfo("The base failed to reach!")
 
         # Sleep to give the last log messages time to be sent
         rospy.sleep(1)
-    elif data.data == "Turtle_adjust":
+    elif data.data == "Human_find2":
         try:
             #rospy.loginfo("Success to adjust the position!")
-            AdjustPosition()
+            adjust(2)
+            talker(7)
             #rospy.loginfo("come in adjust")
             #rospy.Subscriber("adjust_angle", UInt16,adjustcallback)
             #rospy.spin()
             #talker(7)
         except:
-            rospy.loginfo("Failed to adjust the positon!")
+            rospy.loginfo("Failed to adjust the position!")
+    elif data.data == "Human_find3":
+        try:
+            adjust(10)
+            talker(7)
+        except:
+            rospy.loginfo("Failed to adjust the position!")
 
 def talker(sim_flag):
-    pub = rospy.Publisher('turtle_sim_situation', String, queue_size=10)
+    pub = rospy.Publisher('Mian_Sub', String, queue_size=10)
     #rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(5) # 10hz
     for i in range(1):
         print("the situation of Turtlebot:\n \
-            Turtle_reach_1:first time success to guest room \n \
-            Turtle_reach_2: first time success to thing room \n \
-            Turtle_reach_3: second time success o guest room \n \
+            Turtle_reach_human1:first time success to guest room \n \
+            Turtle_reach_goods: first time success to thing room \n \
+            Turtle_reach_human2: second time success o guest room \n \
             Turtle_adjust_finish: success to adjust the positon ")
         if sim_flag == 4:
-            sim = "Turtle_reach_1"
+            sim = "Turtle_reach_human1"
         elif sim_flag == 5:
-            sim = "Turtle_reach_2"
+            sim = "Turtle_reach_goods"
         elif sim_flag == 6:
-            sim = "Turtle_reach_3"
+            sim = "Turtle_reach_human2"
         elif sim_flag == 7:
             sim = "Turtle_adjust_finish"
         print(sim)
@@ -197,7 +209,7 @@ def listener():
     # run simultaneously.
     rospy.init_node('HRI_sim', anonymous=True)
 
-    sub = rospy.Subscriber("chatter", String,callback)
+    sub = rospy.Subscriber("Main_Pub", String,callback)
     sub_1 = rospy.Subscriber("adjust_angle", String,adjustcallback)
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()

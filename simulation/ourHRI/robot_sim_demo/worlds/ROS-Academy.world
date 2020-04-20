@@ -43,12 +43,12 @@
     <include>
       <uri>model://person_standing</uri>
       <name>person_standing_0</name>
-      <pose>0.671 -3.492 0 0 0 3.14</pose>
+      <pose>0.471 -3.492 0 0 0 2.70</pose>
     </include>
     <include>
       <uri>model://person_standing</uri>
       <name>person_standing_1</name>
-      <pose>2.746 -1.822 0 0 0 -1.57</pose>
+      <pose>2.746 -1.652 0 0 0 -1.47</pose>
     </include>
   </world>
 </sdf>
