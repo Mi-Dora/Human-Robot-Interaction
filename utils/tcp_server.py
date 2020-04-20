@@ -43,7 +43,7 @@ class SocketServer(object):
         #     return False
         if self.clientSock is not None:
             self.clientSock.close()
-            self.clientSock = None
+            # self.clientSock = None
         self.waitConnection()
         if not os.path.exists(savepath):
             os.mkdir(savepath)
@@ -64,7 +64,7 @@ class SocketServer(object):
         #     return False
         if self.clientSock is not None:
             self.clientSock.close()
-            self.clientSock = None
+            # self.clientSock = None
         self.waitConnection()
         time.sleep(1)
         if not os.path.isfile(filepath):
