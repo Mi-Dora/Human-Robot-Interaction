@@ -38,9 +38,13 @@ class SocketServer(object):
             return False
 
     def receiveFile(self, savepath='./'):
-        if self.clientSock is None:
-            print("No connection yet!")
-            return False
+        # if self.clientSock is None:
+        #     print("No connection yet!")
+        #     return False
+        if self.clientSock is not None:
+            self.clientSock.close()
+            self.clientSock = None
+        self.waitConnection()
         if not os.path.exists(savepath):
             os.mkdir(savepath)
         received, fn = deal_image(self.clientSock, savepath)
@@ -55,9 +59,14 @@ class SocketServer(object):
         return False, fn
 
     def sendFile(self, filepath):
-        if self.clientSock is None:
-            print("No connection yet!")
-            return False
+        # if self.clientSock is None:
+        #     print("No connection yet!")
+        #     return False
+        if self.clientSock is not None:
+            self.clientSock.close()
+            self.clientSock = None
+        self.waitConnection()
+        time.sleep(1)
         if not os.path.isfile(filepath):
             print(filepath + ' does not exists!')
             return False
@@ -65,6 +74,7 @@ class SocketServer(object):
                             os.stat(filepath).st_size)
         try:
             self.clientSock.send(fhead)
+            time.sleep(1)
             fp = open(filepath, 'rb')
             while True:
                 data = fp.read(1024)  # read file data
@@ -92,7 +102,7 @@ class SocketServer(object):
         self.clientSock.sendall(num)
 
 
-def sock_receive():
+def sock_receive(save_path):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -107,7 +117,7 @@ def sock_receive():
     while True:
         sock, addr = s.accept()  # addr: tuple(ip,port)
         print("Accept connection from {0}".format(addr))  # show (ip:port)
-        deal_image(sock)
+        deal_image(sock, save_path)
 
 
 def deal_image(sock, savepath='./'):
@@ -143,15 +153,21 @@ def deal_image(sock, savepath='./'):
 
 
 if __name__ == '__main__':
-    server = SocketServer()
-    server.waitConnection()
+    # server = SocketServer()
+    # server.waitConnection()
     # server.sendNumber(2)
     # server.receiveFile('serverSaved')
-    server.sendFile('2.txt')
-    time.sleep(1)
-    server.sendFile('objectFound/coffee.jpg')
-    time.sleep(1)
-    server.sendFile('objectFound/milk.jpg')
+    # server.sendFile('objectFound/cola.jpg')
+    # time.sleep(5)
+    # server.sendFile('objectFound/coffee.jpg')
+    # time.sleep(5)
+    # server.sendFile('objectFound/milk.jpg')
     # while True:
     # server.receiveMessage()
     # server.receiveFile('serverSaved')
+    # server.receiveFile('serverSaved')
+    # server.receiveFile('serverSaved')
+    sock_receive('serverSaved')
+    sock_receive('serverSaved')
+    sock_receive('serverSaved')
+

@@ -62,7 +62,7 @@ server = SocketServer()
 pub = rospy.Publisher('Main_Sub', String, queue_size=10)
 rospy.init_node('Tcp_py', anonymous=False)
 rospy.Subscriber("Main_Pub", String, callback)
-server.waitConnection()
+# server.waitConnection()
 
 human_num = 0
 while True:

@@ -2,6 +2,7 @@ import socket
 import os
 import sys
 import struct
+import time
 
 __all__ = ['sock_send', 'SocketClient']
 
@@ -43,14 +44,20 @@ class SocketClient(object):
     def __del__(self):
         self.sock.close()
 
+    def connect(self):
+        self.sock.close()
+        self.sock.connect((self.ip, self.port))
+
     def sendFile(self, filepath):
         if not os.path.isfile(filepath):
             print(filepath + ' does not exists!')
             return
+        self.connect()
+        time.sleep(1)
         fhead = struct.pack(b'128sq', bytes(os.path.basename(filepath), encoding='utf-8'),
                             os.stat(filepath).st_size)
         self.sock.send(fhead)
-
+        time.sleep(1)
         fp = open(filepath, 'rb')
         while True:
             data = fp.read(1024)  # read file data
@@ -62,8 +69,9 @@ class SocketClient(object):
     def receiveFile(self, savepath='./'):
         received = False
         fn = None
+        self.connect()
         try:
-            print('Waiting for receiving')
+            # print('Waiting for receiving')
             fileinfo_size = struct.calcsize('128sq')
             buf = self.sock.recv(fileinfo_size)
             if buf:
@@ -106,4 +114,3 @@ if __name__ == '__main__':
     # client.receiveMessage()
     # client.sendFile('clientSaved/UHD.png')
     client.receiveFile('clientSaved')
-
