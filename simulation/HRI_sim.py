@@ -178,7 +178,7 @@ def callback(data):
             rospy.loginfo("Failed to adjust the position!")
 
 def talker(sim_flag):
-    pub = rospy.Publisher('Mian_Sub', String, queue_size=10)
+    pub = rospy.Publisher('Main_Sub', String, queue_size=10)
     #rospy.init_node('talker', anonymous=True)
     rate = rospy.Rate(5) # 10hz
     for i in range(1):
