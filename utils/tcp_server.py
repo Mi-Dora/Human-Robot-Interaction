@@ -45,6 +45,7 @@ class SocketServer(object):
             self.clientSock.close()
             # self.clientSock = None
         self.waitConnection()
+        # time.sleep(2)
         if not os.path.exists(savepath):
             os.mkdir(savepath)
         received, fn = deal_image(self.clientSock, savepath)
@@ -56,6 +57,7 @@ class SocketServer(object):
             #     except OSError:
             #         print("Connection lost...")
             return True, fn
+        print('No receive')
         return False, fn
 
     def sendFile(self, filepath):
@@ -118,6 +120,7 @@ def sock_receive(save_path):
         sock, addr = s.accept()  # addr: tuple(ip,port)
         print("Accept connection from {0}".format(addr))  # show (ip:port)
         deal_image(sock, save_path)
+        sock.close()
 
 
 def deal_image(sock, savepath='./'):
@@ -146,28 +149,29 @@ def deal_image(sock, savepath='./'):
             fp.close()
             print("\'{0}\' received.".format(fn))
             received = True
-        sock.close()
+        # sock.close()
     except OSError:
         return False, None
     return received, fn
 
 
 if __name__ == '__main__':
-    # server = SocketServer()
+    server = SocketServer()
     # server.waitConnection()
     # server.sendNumber(2)
     # server.receiveFile('serverSaved')
-    # server.sendFile('objectFound/cola.jpg')
+    server.sendFile('objectFound/cola.jpg')
     # time.sleep(5)
-    # server.sendFile('objectFound/coffee.jpg')
+    server.sendFile('objectFound/coffee.jpg')
     # time.sleep(5)
-    # server.sendFile('objectFound/milk.jpg')
+    server.sendFile('objectFound/milk.jpg')
     # while True:
     # server.receiveMessage()
+    # while True:
+    #     server.receiveFile('serverSaved')
     # server.receiveFile('serverSaved')
     # server.receiveFile('serverSaved')
-    # server.receiveFile('serverSaved')
-    sock_receive('serverSaved')
-    sock_receive('serverSaved')
-    sock_receive('serverSaved')
+    # sock_receive('serverSaved')
+    # sock_receive('serverSaved')
+    # sock_receive('serverSaved')
 

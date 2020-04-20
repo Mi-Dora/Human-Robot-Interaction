@@ -33,20 +33,27 @@ class SocketClient(object):
     def __init__(self, ip='116.235.60.223', port=33333):
         self.ip = ip
         self.port = port
-        try:
-            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.sock.connect((self.ip, self.port))
-            # self.receiveMessage()
-        except socket.error as msg:
-            print(msg)
-            print(sys.exit(1))
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # try:
+        #     self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #     self.sock.connect((self.ip, self.port))
+        #     # self.receiveMessage()
+        # except socket.error as msg:
+        #     print(msg)
+        #     print(sys.exit(1))
 
     def __del__(self):
         self.sock.close()
 
     def connect(self):
         self.sock.close()
-        self.sock.connect((self.ip, self.port))
+        self.sock = None
+        try:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.connect((self.ip, self.port))
+        except socket.error as msg:
+            print(msg)
+            print(sys.exit(1))
 
     def sendFile(self, filepath):
         if not os.path.isfile(filepath):
