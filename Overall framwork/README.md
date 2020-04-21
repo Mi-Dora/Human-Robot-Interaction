@@ -1,6 +1,6 @@
 # Overall framework simulation
  
-## Here is the way to run 
+## Here is the way to run in rosrun
 * Step one: Put all the four files in ros workspace, such as /home/alan/catkin_ws/src/beginner_tutorials/scripts 
 * Step two: In the corresponding file folder of the four files, make it executable:
 ````
@@ -11,3 +11,5 @@ $ chmod +x Object_detect_sim.py
 ````
 * Step three: catkin_make and source it
 * Step four: Run them respectively in four new shell. Notice that the **main_sim.py must be run in the end**
+
+## Or just run in python3 after roscore
