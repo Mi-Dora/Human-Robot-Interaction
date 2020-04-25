@@ -4,7 +4,7 @@
 
 See README.md in each folder to install the environment.
 
-Following step is for the local host to run the system.
+Following steps are for local host to run the system.
 
 **Step 1:** startup roscore
 
